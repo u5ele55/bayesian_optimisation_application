@@ -16,11 +16,24 @@ class PendulumState:
     def __init__(self, angle: float, angularSpeed: float):
         self.angle = angle
         self.speed = angularSpeed
+    def __add__(self, other):
+        return PendulumState(self.angle + other.angle, self.speed + other.speed)
+    def __mul__(self, mlt):
+        return PendulumState(self.angle * mlt, self.speed * mlt)
+    def __rmul__(self, mlt):
+        return self.__mul__(mlt)
+    def __truediv__(self, div):
+        return PendulumState(self.angle / div, self.speed / div)
 
 class DissipativePendulum:
     def __init__(self, omega: float, dissipation_coeffitient: float, initialAngle: float, initialAngularSpeed: float):
-        self.omega = omega
+        self.omegaSq = omega**2
         self.dissipCoeff = dissipation_coeffitient
         self.initialState = PendulumState(initialAngle, initialAngularSpeed)
     
-    # TODO: add DE of system
+    def f(self, state: PendulumState):
+        a = -self.dissipCoeff * state.speed - self.omegaSq * math.sin(state.angle)
+        dAngularSpeed = a
+        dAngle = state.speed
+
+        return PendulumState(dAngle, dAngularSpeed)

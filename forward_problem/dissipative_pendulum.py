@@ -13,9 +13,10 @@ import math
 # ȯ = - cȧ - ω**2 sin(a)
 
 class PendulumState:
-    def __init__(self, angle: float, angularSpeed: float):
+    ''' Stores state of the system '''
+    def __init__(self, angle: float, angular_speed: float):
         self.angle = angle
-        self.speed = angularSpeed
+        self.speed = angular_speed
     def __add__(self, other):
         return PendulumState(self.angle + other.angle, self.speed + other.speed)
     def __mul__(self, mlt):
@@ -24,17 +25,19 @@ class PendulumState:
         return self.__mul__(mlt)
     def __truediv__(self, div):
         return PendulumState(self.angle / div, self.speed / div)
-    
+
 
 class DissipativePendulum:
-    def __init__(self, omega: float, dissipation_coeffitient: float, initialAngle: float, initialAngularSpeed: float):
-        self.omegaSq = omega**2
-        self.dissipCoeff = dissipation_coeffitient
-        self.initialState = PendulumState(initialAngle, initialAngularSpeed)
+    ''' Class for dissipative pendulum system. Stores parameters and DE of the system '''
+    def __init__(self, omega: float, dissipation_coeffitient: float, initial_angle: float, initial_angular_speed: float):
+        self.omega_sq = omega**2
+        self.dissip_coeff = dissipation_coeffitient
+        self.initial_state = PendulumState(initial_angle, initial_angular_speed)
     
     def f(self, state: PendulumState):
-        a = -self.dissipCoeff * state.speed - self.omegaSq * math.sin(state.angle)
-        dAngularSpeed = a
-        dAngle = state.speed
+        ''' DE of the system '''
+        acceleration = -self.dissip_coeff * state.speed - self.omega_sq * math.sin(state.angle)
+        d_angular_speed = acceleration
+        d_angle = state.speed
 
-        return PendulumState(dAngle, dAngularSpeed)
+        return PendulumState(d_angle, d_angular_speed)

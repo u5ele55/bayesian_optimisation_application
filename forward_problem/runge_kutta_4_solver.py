@@ -1,11 +1,11 @@
 from forward_problem.solver import AbstractForwardSolver
 
 class RungeKutta4Solver(AbstractForwardSolver):
-    
-    def methodStep(self, state, dt: float):
-        k1 = self.system.f(state)
-        k2 = self.system.f(state + dt * k1 / 2)
-        k3 = self.system.f(state + dt * k2 / 2)
-        k4 = self.system.f(state + dt * k3)
+    ''' Solves problem with RK4 method '''
+    def method_step(self, state, step: float):
+        k_1 = self.system.f(state)
+        k_2 = self.system.f(state + step * k_1 / 2)
+        k_3 = self.system.f(state + step * k_2 / 2)
+        k_4 = self.system.f(state + step * k_3)
 
-        return state + dt * (k1 + 2*k2 + 2*k3 + k4) / 6
+        return state + step * (k_1 + 2*k_2 + 2*k_3 + k_4) / 6

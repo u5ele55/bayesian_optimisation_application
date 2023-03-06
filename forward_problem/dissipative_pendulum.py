@@ -24,6 +24,7 @@ class PendulumState:
         return self.__mul__(mlt)
     def __truediv__(self, div):
         return PendulumState(self.angle / div, self.speed / div)
+    
 
 class DissipativePendulum:
     def __init__(self, omega: float, dissipation_coeffitient: float, initialAngle: float, initialAngularSpeed: float):

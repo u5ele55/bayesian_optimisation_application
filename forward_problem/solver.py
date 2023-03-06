@@ -1,5 +1,5 @@
 
-class ForwardSolver:
+class AbstractForwardSolver:
     def __init__(self, system, h = 1e-2):
         self.h = h
         self.system = system
@@ -11,8 +11,8 @@ class ForwardSolver:
         if t <= self.lastEvaluatedMoment:
             # recalculate more precisely 
             dh = t - self.h * int(t / self.h)
-            precState = self.methodStep(self.values[self.h * int(t / self.h)], dh)
-            return precState
+            preciseState = self.methodStep(self.values[self.h * int(t / self.h)], dh)
+            return preciseState
         
         state = self.values[self.lastEvaluatedMoment]
 
@@ -24,12 +24,12 @@ class ForwardSolver:
         # recalculate more precisely for case when t != self.h * k for some whole k
         dh = t - self.h * int(t / self.h)
         if dh != 0:
-            precState = self.methodStep(self.values[self.h * (t // self.h)], dh)
-            return precState
+            preciseState = self.methodStep(self.values[self.h * (t // self.h)], dh)
+            return preciseState
         return self.values[self.h * int(t / self.h)]
     
     # factory method
     def methodStep(self, state, dt: float):
         ''' One step of the method '''
-        pass
+        raise NotImplementedError("Use concrete forward problem solver")
     

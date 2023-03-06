@@ -1,6 +1,6 @@
-from forward_problem.solver import ForwardSolver
+from forward_problem.solver import AbstractForwardSolver
 
-class RungeKutta4Solver(ForwardSolver):
+class RungeKutta4Solver(AbstractForwardSolver):
     
     def methodStep(self, state, dt: float):
         k1 = self.system.f(state)

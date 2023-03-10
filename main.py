@@ -1,4 +1,5 @@
-import forward_problem.testing
+''' Entry point '''
+import system_noise.testing
 
 if __name__ == '__main__':
-    forward_problem.testing.test()
+    system_noise.testing.test()

@@ -8,13 +8,13 @@ from forward_problem.dissipative_pendulum import DissipativePendulum
 def test():
     ''' Test noise '''
     system = DissipativePendulum(0.5, 0.3, 3.14/3, 0.2)
-    solver = RungeKutta4Solver(system)
+    solver = RungeKutta4Solver(system, store_values=False, step=0.05)
     noiser = SimpleNoiseCreator(solver)
 
-    vals = [solver.get_state(i / 100) for i in range(4000)]
-    vals_noise = [noiser.get_state( i / 100 ) for i in range(4000)]
+    vals = [solver.get_state(i / 100) for i in range(1500)]
+    vals_noise = [noiser.get_state( i / 100 ) for i in range(1500)]
 
-    plt.plot([i/100 for i in range(4000)], [val.angle for val in vals])
-    plt.plot([i/100 for i in range(4000)], [val.angle for val in vals_noise])
+    plt.plot([i/100 for i in range(1500)], [val.angle for val in vals])
+    plt.scatter([i/100 for i in range(1500)], [val.angle for val in vals_noise], s=1, c="#000000")
     plt.show()
     

@@ -7,32 +7,32 @@ class AbstractForwardSolver:
     def __init__(self, system, step = 1e-2):
         self.step = step
         self.system = system
-        self.values = {0: system.initial_state}
-        self.last_evaluated_moment = 0
 
     def get_state(self, time: float):
         ''' Returns state in time = `t` '''
-        whole_part = self.step * int(time / self.step)
+        state = self.system.initial_state
 
-        if time <= self.last_evaluated_moment:
-            # recalculate more precisely
-            time_diff = time - whole_part
-            precise_state = self.method_step(self.values[whole_part], time_diff)
-            return precise_state
-        
-        state = self.values[self.last_evaluated_moment]
-
-        for i in range(int(self.last_evaluated_moment / self.step) + 1, int(time / self.step) + 1):
+        for _ in range(1, int(time / self.step) + 1):
             state = self.method_step(state, self.step)
-            self.values[self.step * i] = state
-        self.last_evaluated_moment = int(time / self.step) * self.step
-
+        
         # recalculate more precisely for case when t != self.h * k for some whole k
+        whole_part = self.step * int(time / self.step)
         time_diff = time - whole_part
         if time_diff != 0:
-            precise_state = self.method_step(self.values[whole_part], time_diff)
+            precise_state = self.method_step(state, time_diff)
             return precise_state
-        return self.values[whole_part]
+        return state
+
+    def get_states(self, time: float) -> list:
+        ''' Returns map of states up to nearest to `time` whole multiple of `step` '''
+        values = {}
+        state = self.system.initial_state
+
+        for i in range(1, int(time / self.step) + 1):
+            state = self.method_step(state, self.step)
+            values[self.step * i] = state
+
+        return values
 
     # factory method
     def method_step(self, state, step: float):

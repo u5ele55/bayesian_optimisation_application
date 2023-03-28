@@ -1,12 +1,11 @@
 ''' Example of how noise can be applied to system '''
-from math import sin
 from system_noise.noise_creator import AbstractNoiseCreator
-from forward_problem.dissipative_pendulum import PendulumState
+import numpy as np
 
 class SimpleNoiseCreator(AbstractNoiseCreator):
     ''' Prototype of how noise creation should look like '''
-    def noise_function(self, state: PendulumState, time) -> PendulumState:
+    def noise_function(self, state: np.ndarray, time):
         ''' Goofy example '''
-        coeff = 1 + sin(time) / 20
+        coeff = 1 + np.sin(time) / 20
         return state * coeff
     

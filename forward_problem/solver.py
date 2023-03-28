@@ -8,7 +8,7 @@ class AbstractForwardSolver:
     def __init__(self, system, step = 1e-2):
         self.step = step
         self.system = system
-        self.state = np.array([0,0])
+        self.state = np.array([0.0,0.0])
 
     def get_state(self, time: float):
         ''' Returns state in time = `time` '''
@@ -30,6 +30,7 @@ class AbstractForwardSolver:
     def get_states(self, time: float) -> dict[float, np.ndarray]:
         ''' Returns map of states up to nearest to `time` whole multiple of `step` '''
         values = {}
+        
         self.state[0] = self.system.initial_state[0]
         self.state[1] = self.system.initial_state[1]
 

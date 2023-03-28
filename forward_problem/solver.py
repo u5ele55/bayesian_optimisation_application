@@ -28,7 +28,10 @@ class AbstractForwardSolver:
         return self.state
 
     def get_states(self, time: float) -> dict[float, np.ndarray]:
-        ''' Returns map of states up to nearest to `time` whole multiple of `step` '''
+        ''' Returns map of states up to nearest to `time` whole multiple of `step`. 
+        By specification of our task, this method will be used only for testing, as
+        program will be forced to calculate state of the system every time and won't
+        be able to store all states'''
         values = {}
         
         self.state[0] = self.system.initial_state[0]

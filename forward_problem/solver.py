@@ -12,8 +12,8 @@ class AbstractForwardSolver:
 
     def get_state(self, time: float):
         ''' Returns state in time = `time` '''
-        self.state[0] = self.system.initial_state[0]
-        self.state[1] = self.system.initial_state[1]
+        for i in range(len(self.system.initial_state)):
+            self.state[i] = self.system.initial_state[i]
 
         for _ in range(1, int(time / self.step) + 1):
             self.method_step(self.state, self.step)
@@ -34,8 +34,8 @@ class AbstractForwardSolver:
         be able to store all states'''
         values = {}
         
-        self.state[0] = self.system.initial_state[0]
-        self.state[1] = self.system.initial_state[1]
+        for i in range(len(self.system.initial_state)):
+            self.state[i] = self.system.initial_state[i]
 
         for i in range(1, int(time / self.step) + 1):
             self.method_step(self.state, self.step)

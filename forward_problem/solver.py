@@ -8,7 +8,7 @@ class AbstractForwardSolver:
     def __init__(self, system, step = 1e-2):
         self.step = step
         self.system = system
-        self.state = np.array([0.0,0.0])
+        self.state = np.zeros(system.initial_state.shape, float)
 
     def get_state(self, time: float):
         ''' Returns state in time = `time` '''

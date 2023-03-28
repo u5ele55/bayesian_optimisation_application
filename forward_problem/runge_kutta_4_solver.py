@@ -10,7 +10,8 @@ class RungeKutta4Solver(AbstractForwardSolver):
 
     def method_step(self, state: np.ndarray, step: float):
         ''' Implementation of RK4 method step. Changes `state` vector '''
-        self.k_1 = np.copy(state)
+        self.k_1[0] = state[0]
+        self.k_1[1] = state[1]
         self.system.f(self.k_1)
 
         self.k_2 = state + step * self.k_1 / 2

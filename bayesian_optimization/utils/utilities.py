@@ -3,7 +3,7 @@ import numpy as np
 
 class Utilities:
     @staticmethod
-    def choletsky_decomposition(matrix) -> np.array:
+    def choletsky_decomposition(matrix) -> np.ndarray:
         """Performs a Cholesky decomposition of `matrix`, which must
         be a symmetric and positive definite matrix. The function
         returns the lower variant triangular matrix, L."""
@@ -24,7 +24,7 @@ class Utilities:
         return L
 
     @staticmethod
-    def solve_using_choletsky(L: np.array, m: np.array, answer: np.array):
+    def solve_using_choletsky(L: np.ndarray, m: np.ndarray, answer: np.ndarray):
         """Solve equation `L * L.T * x = m` for x, where `L` is a lower variant triangular matrix.
         `answer` will be changed to solution vector"""
         assert L.shape[0] == m.size and m.size == answer.size, "Everything must have the same size"
@@ -43,7 +43,7 @@ class Utilities:
             answer[i] = (y[i] - sum(answer[j] * L[j][i] for j in range(i + 1, m.size))) / L[i][i]
 
     @staticmethod
-    def solve_matrix_choletsky(L: np.array, B: np.array, X: np.array):
+    def solve_matrix_choletsky(L: np.ndarray, B: np.ndarray, X: np.ndarray):
         """Solve equation `L * L.T * X = B` for matrix X. `X` will be changed"""
         assert L.shape[0] == B.shape[0] and L.shape[0] == X.shape[0] and X.shape[1] == B.shape[1], \
             "You messed up sizes!"

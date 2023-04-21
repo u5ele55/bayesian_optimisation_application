@@ -2,7 +2,7 @@ from bayesian_optimization.utils.kernels import *
 from bayesian_optimization.utils.utilities import Utilities
 
 
-def cov_matrix(x1, x2, cov_function) -> np.array:
+def cov_matrix(x1, x2, cov_function) -> np.ndarray:
     return np.array([[cov_function(a, b) for a in x1] for b in x2])
 
 
@@ -14,19 +14,18 @@ class GPR:
         # fit surrogate model using dataset
         self.covariance_L = None
         self.covariance_matrix = None
-        self.data_x = None
-        self.data_y = None
+        self.data_x = np.array([])
+        self.data_y = np.array([])
         self.noise = noise
         self.covariance_function = kernel
 
-    def fit(self, data_x: np.array, data_y: np.array):
-        # Store covariance matrix and cholesky decomposition as it will be used to solve x = C^-1 * y at every iteration
+    def fit(self, data_x: np.ndarray, data_y: np.ndarray):
         self.data_x = data_x
         self.data_y = data_y
         self.covariance_matrix = cov_matrix(data_x, data_x, self.covariance_function) + self.noise * np.identity(len(self.data_x))
         self.covariance_L = Utilities.choletsky_decomposition(self.covariance_matrix)
 
-    def predict(self, at_values: np.array) -> np.array:
+    def predict(self, at_values: np.ndarray) -> dict:
         # function to predict output at new input values. Store the mean and covariance matrix in memory.
         k_lower_left = cov_matrix(
             self.data_x, at_values, self.covariance_function)

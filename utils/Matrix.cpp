@@ -19,9 +19,11 @@ double Matrix::at(int y, int x) const
 void Matrix::resize(int n, int m)
 {
     data.resize(n);
-    for(int i = 0; i < this->n; i ++) {
+    for(int i = 0; i < n; i ++) {
         data[i].resize(m);
     }
+    this->n = n;
+    this->m = m;
 }
 
 void Matrix::emplaceColumn(const Matrix &column, int index)

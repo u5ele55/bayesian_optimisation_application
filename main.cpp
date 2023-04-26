@@ -28,8 +28,17 @@ int main() {
     auto x = Matrix(2,2);
     CholeskyMaster::solveCholesky(L, B, x);
 
-    std::cout << "ANS: \n" << x << '\n';
-    std::cout << a * x << '\n';
+    // Test iterative
 
+    a.resize(3,3);
+    a.at(2, 0) = 1;
+    a.at(2, 1) = 2;
+    a.emplaceColumn(Vector{1,2,3}, 2);
+
+    CholeskyMaster::choleskyDecompositionIterative(a, L);
+
+    std::cout << L << '\n';
+    std::cout << L * L.transpose() << '\n';
+    
     return 0;
 }

@@ -4,6 +4,9 @@
 
 Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A)
 {
+    if (A.getShape().first != A.getShape().second) {
+        throw std::invalid_argument("CholeskyMaster::choleskyDecomposition: Wrong sizes");
+    }
     int n = A.getShape().first;
     auto ans = Matrix(n, n);
 
@@ -26,6 +29,26 @@ Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A)
 
 void CholeskyMaster::choleskyDecompositionIterative(const Matrix &newA, Matrix &L)
 {
+    if (newA.getShape().first != newA.getShape().second || L.getShape().first + 1 != newA.getShape().first) {
+        throw std::invalid_argument("CholeskyMaster::choleskyDecompositionIterative: Wrong sizes");
+    }
+    int n = L.getShape().first;
+    L.resize(n+1, n+1);
+    
+    // just last row
+    for (int k = 0; k < n+1; k ++) {
+        double sum = 0;
+        for (int i = 0; i < k; i ++) {
+            sum += L.at(n, i) * L.at(k, i);
+        }
+        if (k == n) {
+            // L(n+1)(n+1)
+            L.at(n, n) = sqrt(newA.at(n, k) - sum);
+        } else {
+            L.at(n, k) = (newA.at(n, k) - sum) / L.at(k, k);
+        }
+    }
+    
 }
 
 Vector CholeskyMaster::solveCholesky(const Matrix &L, const Vector &b)

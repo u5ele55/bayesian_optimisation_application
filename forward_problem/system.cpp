@@ -14,3 +14,8 @@ void System::f(Vector &state) const
     state[0] = state[1];       // d_angle = speed
     state[1] = acceleration;   // d_speed = acceleration
 }
+
+Vector System::getInitialState() const
+{
+    return initialState;
+}

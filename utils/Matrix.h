@@ -10,6 +10,8 @@ public:
     double& at(int y, int x);
     double at(int y, int x) const;
 
+    std::pair<int, int> getShape() const;
+
     Matrix transpose() const;
 
     Matrix operator*(const double val) const;
@@ -18,6 +20,10 @@ public:
     Matrix operator+(const Matrix &other) const;
     Matrix operator-() const;
     Matrix operator-(const Matrix &other) const;
+
+    Matrix& operator+=(const Matrix& other);
+
+    Matrix& operator=(const Matrix& other);
 
     friend std::ostream& operator<<(std::ostream &stream, const Matrix &matrix);
 private:

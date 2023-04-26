@@ -9,4 +9,7 @@ public:
 
     double &operator[](int n);
     double operator[](int n) const;
+
+    using Matrix::operator+=;
+    using Matrix::operator=;
 };

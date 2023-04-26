@@ -16,6 +16,11 @@ double Matrix::at(int y, int x) const
     return this->data[y][x];
 }
 
+std::pair<int, int> Matrix::getShape() const
+{
+    return {n, m};
+}
+
 Matrix Matrix::operator*(const double val) const
 {
     Matrix other = Matrix(n, m);
@@ -77,6 +82,31 @@ Matrix Matrix::operator-() const
 Matrix Matrix::operator-(const Matrix &other) const
 {
     return *this + (-other);
+}
+
+Matrix &Matrix::operator+=(const Matrix &other)
+{
+    if (n != other.n || m != other.m) {
+        throw std::invalid_argument("Sizes!!!!!!");
+    }
+
+    for(int i = 0; i < n; i ++) {
+        for(int j = 0; j < m; j ++) {
+            data[i][j] += other.data[i][j];
+        }
+    }
+
+    return *this;
+}
+
+Matrix &Matrix::operator=(const Matrix &other)
+{
+    for(int i = 0; i < other.n; i ++) {
+        for(int j = 0; j < other.m; j ++) {
+            data[i][j] = other.data[i][j];
+        }
+    }
+    return *this;
 }
 
 Matrix Matrix::transpose() const

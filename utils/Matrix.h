@@ -6,11 +6,14 @@
 
 class Matrix {
 public:
-    Matrix(int n, int m);
+    explicit Matrix(int n, int m);
     double& at(int y, int x);
     double at(int y, int x) const;
 
     void resize(int n, int m);
+    
+    /// @brief Puts `column` at matrix `index` column
+    void emplaceColumn(const Matrix &column, int index);
 
     std::pair<int, int> getShape() const;
     Matrix transpose() const;
@@ -26,7 +29,7 @@ public:
     Matrix& operator=(const Matrix& other);
 
     friend std::ostream& operator<<(std::ostream &stream, const Matrix &matrix);
-private:
+protected:
     std::vector<std::vector<double>> data;
     int n;
     int m;

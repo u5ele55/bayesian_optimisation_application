@@ -6,6 +6,7 @@ class Vector : public Matrix {
 public:
     Vector(int n);
     Vector(std::initializer_list<double> list);
+    Vector(const Matrix &matrix, int column);
 
     double &operator[](int n);
     double operator[](int n) const;

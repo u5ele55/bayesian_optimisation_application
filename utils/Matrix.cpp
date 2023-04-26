@@ -24,6 +24,19 @@ void Matrix::resize(int n, int m)
     }
 }
 
+void Matrix::emplaceColumn(const Matrix &column, int index)
+{
+    if (column.getShape().first != n || index >= m) {
+        throw std::invalid_argument("Matrix::emplaceColumn: Wrong sizes");
+    }
+    if (column.getShape().second != 1) {
+        throw std::invalid_argument("Matrix::emplaceColumn: column must be a vector!");
+    }
+    for (int i = 0; i < n; i ++) {
+        data[i][index] = column.at(i, 0);
+    }
+}
+
 std::pair<int, int> Matrix::getShape() const
 {
     return {n, m};
@@ -43,7 +56,7 @@ Matrix Matrix::operator*(const double val) const
 Matrix Matrix::operator*(const Matrix &other) const
 {
     if (m != other.n) {
-        throw std::invalid_argument("Sizes!!!!!!");
+        throw std::invalid_argument("Matrix::emplaceColumn: Wrong sizes");
     }
     Matrix result = Matrix(n, other.m);
  
@@ -61,7 +74,7 @@ Matrix Matrix::operator*(const Matrix &other) const
 Matrix Matrix::operator+(const Matrix &other) const
 {
     if (n != other.n || m != other.m) {
-        throw std::invalid_argument("Sizes!!!!!!");
+        throw std::invalid_argument("Matrix::operator+: Wrong sizes");
     }
     Matrix result = Matrix(n, other.m);
  
@@ -95,7 +108,7 @@ Matrix Matrix::operator-(const Matrix &other) const
 Matrix &Matrix::operator+=(const Matrix &other)
 {
     if (n != other.n || m != other.m) {
-        throw std::invalid_argument("Sizes!!!!!!");
+        throw std::invalid_argument("Matrix::operator+=: Wrong sizes");
     }
 
     for(int i = 0; i < n; i ++) {

@@ -13,6 +13,18 @@ Vector::Vector(std::initializer_list<double> list)
     }
 }
 
+Vector::Vector(const Matrix &matrix, int column)
+    : Matrix(matrix.getShape().first, 1)
+{
+    if (matrix.getShape().second <= column) {
+        throw std::invalid_argument("Invalid column number!");
+    }
+    
+    for(int i = 0; i < matrix.getShape().second; i ++) {
+        data[i][0] = matrix.at(i, column);
+    }
+}
+
 double& Vector::operator[](int n)
 {
     return at(n, 0);

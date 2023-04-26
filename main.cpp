@@ -6,7 +6,7 @@
 #include "forward_problem/RK4Solver.h"
 #include "forward_problem/system.h"
 
-#include "utils/CholetskyMaster.h"
+#include "utils/CholeskyMaster.h"
 
 int main() {
     System system(1, 0.5, 0, 1);

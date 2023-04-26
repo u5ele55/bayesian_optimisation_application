@@ -1,4 +1,4 @@
-#include "CholetskyMaster.h"
+#include "CholeskyMaster.h"
 #include <iostream>
 #include <math.h>
 

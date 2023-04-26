@@ -7,7 +7,7 @@ SOURCES = main.cpp   \
 		forward_problem\system.cpp \
 		forward_problem\AbstractForwardSolver.cpp \
 		forward_problem\RK4Solver.cpp \
-		utils\CholetskyMaster.cpp
+		utils\CholeskyMaster.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 

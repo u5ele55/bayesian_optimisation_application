@@ -16,6 +16,14 @@ double Matrix::at(int y, int x) const
     return this->data[y][x];
 }
 
+void Matrix::resize(int n, int m)
+{
+    data.resize(n);
+    for(int i = 0; i < this->n; i ++) {
+        data[i].resize(m);
+    }
+}
+
 std::pair<int, int> Matrix::getShape() const
 {
     return {n, m};

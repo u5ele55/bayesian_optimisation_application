@@ -9,7 +9,7 @@ include_directories(utils)
 
 add_executable(CompMath
         backward_solution/AbstractKernel.cpp
-        backward_solution/AbstractKernel.h
+        backward_solution/IKernel.h
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
         backward_solution/LinearSpace.cpp

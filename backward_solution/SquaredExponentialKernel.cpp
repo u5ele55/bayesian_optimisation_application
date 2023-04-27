@@ -3,3 +3,10 @@
 //
 
 #include "SquaredExponentialKernel.h"
+
+SquaredExponentialKernel::SquaredExponentialKernel(double sigma, double length)
+    : sigma(sigma), length(length) {}
+
+double SquaredExponentialKernel::operator()(const Vector &a, const Vector &b) const {
+    return sigma * std::exp((a-b).dot(a-b) / (2 * std::pow(length, 2)));
+}

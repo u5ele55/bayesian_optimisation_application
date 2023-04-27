@@ -38,3 +38,62 @@ double Vector::operator[](int n) const
 Vector::operator bool() const {
     return n;
 }
+
+double Vector::dot(const Vector &other) {
+    return (this->transpose() * other).at(0,0);
+}
+
+Vector Vector::operator-(const Vector &other) const {
+    return *this + (-other);
+}
+
+Vector Vector::operator+(const Vector &other) const {
+    if (n != other.n) {
+        throw std::invalid_argument("Matrix::operator+: Wrong sizes");
+    }
+    Vector result = Vector(n);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            result.at(i, j) = data[i][j] + other.data[i][j];
+        }
+    }
+
+    return result;
+}
+
+Vector Vector::operator-() const {
+    Vector result = Vector(n);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            result.at(i, j) = -data[i][j];
+        }
+    }
+
+    return result;
+}
+
+Vector &Vector::operator+=(const Vector &other) {
+    if (n != other.n || m != other.m) {
+        throw std::invalid_argument("Vector::operator+=: Wrong sizes");
+    }
+
+    for(int i = 0; i < n; i ++) {
+        for(int j = 0; j < m; j ++) {
+            data[i][j] += other.data[i][j];
+        }
+    }
+
+    return *this;
+}
+
+Vector &Vector::operator=(const Vector &other) {
+    resize(other.n, other.m);
+    for(int i = 0; i < other.n; i ++) {
+        for(int j = 0; j < other.m; j ++) {
+            data[i][j] = other.data[i][j];
+        }
+    }
+    return *this;
+}

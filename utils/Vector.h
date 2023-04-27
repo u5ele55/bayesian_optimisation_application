@@ -12,6 +12,16 @@ public:
     double operator[](int n) const;
     explicit operator bool() const;
 
-    using Matrix::operator+=;
-    using Matrix::operator=;
+
+    Vector operator+(const Vector &other) const;
+    Vector operator-() const;
+    Vector operator-(const Vector &other) const;
+    Vector& operator+=(const Vector& other);
+    Vector& operator=(const Vector& other);
+    // using Matrix::operator+=;
+    // using Matrix::operator+;
+    // using Matrix::operator-
+    // using Matrix::operator=;
+
+    double dot(const Vector &other);
 };

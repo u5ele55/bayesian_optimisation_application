@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(CompMath)
+project(bayesian_optimisation_application)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -7,11 +7,10 @@ include_directories(backward_solution)
 include_directories(forward_problem)
 include_directories(utils)
 
-add_executable(CompMath
-        backward_solution/AbstractKernel.cpp
-        backward_solution/IKernel.h
+add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
+        backward_solution/IKernel.h
         backward_solution/LinearSpace.cpp
         backward_solution/LinearSpace.h
         backward_solution/SquaredExponentialKernel.cpp

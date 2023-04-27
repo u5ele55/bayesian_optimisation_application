@@ -16,6 +16,7 @@ public:
     Vector operator+(const Vector &other) const;
     Vector operator-() const;
     Vector operator-(const Vector &other) const;
+    Vector operator*(double val) const;
     Vector& operator+=(const Vector& other);
     Vector& operator=(const Vector& other);
     // using Matrix::operator+=;

@@ -47,6 +47,15 @@ Vector Vector::operator-(const Vector &other) const {
     return *this + (-other);
 }
 
+Vector Vector::operator*(double val) const
+{
+    Vector res(n);
+    for(int i = 0; i < n; i++) {
+        res[i] = data[i][0] * val;
+    }
+    return res;
+}
+
 Vector Vector::operator+(const Vector &other) const {
     if (n != other.n) {
         throw std::invalid_argument("Matrix::operator+: Wrong sizes");

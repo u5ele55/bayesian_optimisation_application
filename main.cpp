@@ -1,14 +1,26 @@
 #include <iostream>
 
 #include "utils/Vector.h"
-#include "forward_problem/system.h"
+#include "forward_problem/System.h"
 
 #include "forward_problem/RK4Solver.h"
-#include "forward_problem/system.h"
-
+#include "forward_problem/System.h"
+#include "backward_solution/LinearSpace.h"
 #include "utils/CholeskyMaster.h"
 
 int main() {
+    LinearSpace space{};
+    space.addBoundary({0, 1, 1});
+    space.addBoundary({0, 1, 1});
+    space.addBoundary({0, 1, 1});
+    Vector next = space.next();
+    while (next.getShape().first) {
+        std::cout << next << std::endl;
+        next = space.next();
+    }
+}
+
+int mains() {
     System system(1, 0.5, 0, 1);
 
     RK4ForwardSolver solver(system);

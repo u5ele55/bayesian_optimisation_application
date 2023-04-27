@@ -34,3 +34,7 @@ double Vector::operator[](int n) const
 {
     return at(n, 0);
 }
+
+Vector::operator bool() const {
+    return n;
+}

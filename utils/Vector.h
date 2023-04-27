@@ -10,6 +10,7 @@ public:
 
     double &operator[](int n);
     double operator[](int n) const;
+    explicit operator bool() const;
 
     using Matrix::operator+=;
     using Matrix::operator=;

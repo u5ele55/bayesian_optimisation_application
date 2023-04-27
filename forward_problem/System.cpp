@@ -1,6 +1,6 @@
-#include "system.h"
+#include "System.h"
 
-#include "math.h"
+#include <cmath>
 
 System::System(double omega, double dissipation_coeffitient, double initial_angle, double initial_angular_speed)
     : omegaSquared(omega*omega)

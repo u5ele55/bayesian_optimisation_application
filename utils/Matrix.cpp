@@ -124,6 +124,7 @@ Matrix &Matrix::operator+=(const Matrix &other)
 
 Matrix &Matrix::operator=(const Matrix &other)
 {
+    resize(other.n, other.m);
     for(int i = 0; i < other.n; i ++) {
         for(int j = 0; j < other.m; j ++) {
             data[i][j] = other.data[i][j];

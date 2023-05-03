@@ -21,6 +21,10 @@ public:
     Vector next();
 
     void clear();
+
+    size_t size();
+
+    Vector at(int i);
 protected:
     std::vector<Dimension> space;
     Vector position;

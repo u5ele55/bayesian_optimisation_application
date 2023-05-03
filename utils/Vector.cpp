@@ -13,14 +13,22 @@ Vector::Vector(std::initializer_list<double> list)
     }
 }
 
+Vector::Vector(std::vector<double> l)
+    : Matrix(l.size(), 1)
+{
+    for(int i = 0; i < l.size(); i ++) {
+        data[i][0] = l[i];
+    }
+}
+
 Vector::Vector(const Matrix &matrix, int column)
     : Matrix(matrix.getShape().first, 1)
 {
     if (matrix.getShape().second <= column) {
         throw std::invalid_argument("Invalid column number!");
     }
-    
-    for(int i = 0; i < matrix.getShape().second; i ++) {
+
+    for(int i = 0; i < matrix.getShape().first; i ++) {
         data[i][0] = matrix.at(i, column);
     }
 }

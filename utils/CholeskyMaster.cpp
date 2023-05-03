@@ -9,21 +9,24 @@ Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A)
     }
     int n = A.getShape().first;
     auto ans = Matrix(n, n);
-
+    // std::cout << "matrix = " << A << "\n";
+    // exit(0);
     for (int i = 0; i < n; i ++) {
-        for (int j = 0; j < i+1; j ++) {
+        for (int k = 0; k < i+1; k ++) {
             double sum = 0;
-            for (int k = 0; k < j; k ++) {
-                sum += ans.at(i, k) * ans.at(j, k);
+            for (int j = 0; j < k; j ++) {
+                sum = std::fma(ans.at(i, j), ans.at(k, j), sum);
             }
-            if (i == j) {
-                ans.at(i, j) = sqrt(A.at(i,i) - sum);
+            std::cout << "sum = " << sum << "\n";
+            if (i == k) {
+                ans.at(i, k) = sqrtl(A.at(i,i) - sum);
             } else {
-                ans.at(i, j) = (A.at(i,j) - sum) / ans.at(j, j);
+                ans.at(i, k) = (A.at(i,k) - sum) / ans.at(k, k);
             }
         }
     }
-
+    // std::cout << "L = " << ans << "\n";
+    // exit(0);
     return ans;
 }
 
@@ -62,11 +65,11 @@ Vector CholeskyMaster::solveCholesky(const Matrix &L, const Vector &b)
     for (int i = 0; i < n; i ++) {
         double sum = 0;
         for (int j = 0; j < i; j ++) {
-            sum += y[j] * L.at(i, j);
+            sum = std::fma(y[j], L.at(i, j), sum);
         }
         y[i] = (b[i] - sum) / L.at(i, i);
     }
-
+    
     auto answer = Vector(n);
     for (int i = n - 1; i >= 0; i --) {
         double sum = 0;
@@ -87,7 +90,7 @@ void CholeskyMaster::solveCholesky(const Matrix &L, const Matrix &B, Matrix &ans
     {
             throw std::invalid_argument("CholeskyMaster::solveCholesky(Matrix): Wrong sizes");
     }
-
+    
     for (int i = 0; i < B.getShape().second; i ++) {
         Vector b = Vector(B, i);
         answer.emplaceColumn(solveCholesky(L, b), i);

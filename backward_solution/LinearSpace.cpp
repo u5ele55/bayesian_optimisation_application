@@ -5,7 +5,10 @@
 #include "LinearSpace.h"
 
 LinearSpace::LinearSpace()
-        : position(0), dims(0), maxReached(false) {}
+    : position(0)
+    , dims(0)
+    , maxReached(false) 
+{}
 
 void LinearSpace::addBoundary(Dimension dimension) {
     space.push_back(dimension);
@@ -21,7 +24,7 @@ Vector LinearSpace::next() {
     Vector result = position;
     maxReached = true;
     for (int i = dims; i >= 0; i--) {
-        if (position[i] < space[i].max) {
+        if (position[i] - 3e-7 <= space[i].max - space[i].step) {
             position[i] += space[i].step;
             maxReached = false;
             break;
@@ -36,4 +39,25 @@ void LinearSpace::clear() {
         position[i] = space[i].min;
     }
     maxReached = false;
+}
+
+size_t LinearSpace::size()
+{
+    size_t res = 1;
+    
+    for(int i = 0; i <= dims; i ++) {
+        res *= static_cast<size_t>((space[i].max - space[i].min) / space[i].step) + 1;
+    }
+
+    return res;
+}
+
+Vector LinearSpace::at(int i)
+{
+    clear();
+    // TODO
+    for (int j = 0; j < i; j++) {
+        next();
+    }
+    return next();
 }

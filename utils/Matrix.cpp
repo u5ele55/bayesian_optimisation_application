@@ -142,7 +142,7 @@ Matrix Matrix::transpose() const
             result.data[j][i] = data[i][j];
         }
     }
-
+    
     return result;
 }
 

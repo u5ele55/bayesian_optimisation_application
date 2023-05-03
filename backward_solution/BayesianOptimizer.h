@@ -12,7 +12,7 @@ public:
     BayesianOptimizer(std::function<double(Vector)> f, GaussianProcesses gp);
 
 private:
-    Vector acquistionUCB(std::vector<Vector> mean, std::vector<Vector> stddev);
+    Vector acquisitionUCB(const Vector &mean, std::vector<Vector> stddev);
 
 private:
     std::function<double(Vector)> f; 

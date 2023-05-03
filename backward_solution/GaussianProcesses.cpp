@@ -70,17 +70,18 @@ std::vector<Vector> &GaussianProcesses::getX()
     return x;
 }
 
-std::vector<Vector> &GaussianProcesses::getY()
+std::vector<double> &GaussianProcesses::getY()
 {
     return y;
 }
 
-std::pair<Matrix, Matrix> GaussianProcesses::predict()
+std::pair<Vector, Matrix> GaussianProcesses::predict()
 {
     auto vy = Vector(y);
     auto covarianceInvertedDataY = CholeskyMaster::solveCholesky(covarianceChol, vy);
     
-    auto mean = influenceCovariance * covarianceInvertedDataY; // todo: flatten may be here?
+    auto mean = Vector(influenceCovariance * covarianceInvertedDataY, 0); 
+
     auto covInvertedTimesInfluence = Matrix(x.size(), influenceCovariance.getShape().first);
     CholeskyMaster::solveCholesky(covarianceChol, influenceCovariance.transpose(), covInvertedTimesInfluence);
     auto conditionalCovariance = aposteriorCovariance - influenceCovariance * covInvertedTimesInfluence;

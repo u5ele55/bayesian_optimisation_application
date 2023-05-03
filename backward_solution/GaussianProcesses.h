@@ -16,11 +16,11 @@ public:
     void fit(Vector newX, double newY);
 
     std::vector<Vector> &getX();
-    std::vector<Vector> &getY();
+    std::vector<double> &getY();
 
     /// @brief predicts gaussian distribution
     /// @return pair of mean, covariance matrix
-    std::pair< Matrix, Matrix > predict();
+    std::pair< Vector, Matrix > predict();
 
     LinearSpace &getSpace();
 private:

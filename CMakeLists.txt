@@ -19,6 +19,8 @@ add_executable(bayesian_optimisation_application
         forward_problem/AbstractForwardSolver.h
         forward_problem/RK4Solver.cpp
         forward_problem/RK4Solver.h
+        forward_problem/RK4SolverWithNoise.cpp
+        forward_problem/RK4SolverWithNoise.h
         forward_problem/System.cpp
         forward_problem/System.h
         utils/CholeskyMaster.cpp

@@ -108,3 +108,17 @@ Vector &Vector::operator=(const Vector &other) {
     }
     return *this;
 }
+
+bool Vector::operator==(const Vector &other) const
+{
+    if (other.getShape().first != n) {
+        return false;
+    }
+    for (size_t i = 0; i < n; i ++) {
+        if (other[i] != at(i, 0)) {
+            return false;
+        }
+    }
+
+    return true;
+}

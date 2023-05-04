@@ -5,6 +5,7 @@
 #include "BayesianOptimizer.h"
 #include <cmath>
 #include <iostream>
+#include <random>
 
 BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
         : f(f),
@@ -28,20 +29,50 @@ Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, doub
         thisValue = space.next();
     }
 
+    if (vectorChecked(minPoint)) {
+        std::cout << "Aha! it was checked: " << minPoint << '\n';
+        minPoint = findRandomUncheckedPoint(space);
+        std::cout << "Instead, exploring at " << minPoint << '\n';
+    }
+
+    checkedDots.push_back(minPoint);
     return minPoint;
 }
 
+Vector BayesianOptimizer::findRandomUncheckedPoint(LinearSpace &space)
+{
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> uniformDistr(0, space.size() - 1);
+
+    size_t randomIndex = uniformDistr(rng);
+    Vector randomUnchecked = space.at(randomIndex);
+
+    while (vectorChecked(randomUnchecked)) {
+        randomIndex = uniformDistr(rng);
+        randomUnchecked = space.at(randomIndex);
+    }
+    return randomUnchecked;
+}
+
+bool BayesianOptimizer::vectorChecked(const Vector &vec) const
+{
+    for (const auto &v : checkedDots) {
+        if (v == vec) {
+            return true;
+        }
+    }
+    return false;
+}
+
 Vector BayesianOptimizer::step() {
-    // std::cout << "Prediction calculation... \n";
     auto prediction = gp.predict();
-    // std::cout << "Predicted!\n";
     auto mean = prediction.first;
     Vector stddev = Vector(mean.getShape().first);
 
     for (int i = 0; i < stddev.getShape().first; i++) {
         stddev[i] = sqrt(prediction.second.at(i, i));
     }
-    // std::cout << "Going through space to find min...\n";
     auto x = acquisitionUCB(mean, stddev, 3);
     double y = f(x);
     std::cout << "Fitting new data with function value " << y << "\n";

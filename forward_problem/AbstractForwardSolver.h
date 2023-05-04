@@ -8,7 +8,7 @@ public:
 
     virtual void methodStep(Vector &state, double step) = 0;
 
-    Vector getState(double time);
+    virtual Vector getState(double time);
 
 protected:
     double step;

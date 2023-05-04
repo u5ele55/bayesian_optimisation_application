@@ -24,6 +24,13 @@ GaussianProcesses::GaussianProcesses(const std::vector<Vector> &priorX, std::vec
             covarianceMatrix.at(j, i) = covarianceMatrix.at(i, j);
         }
     }
+
+    auto noiseMatrix = Matrix(x.size(), x.size());
+    for (int i = 0; i < x.size(); i ++) {
+        noiseMatrix.at(i,i) = noise;
+    }
+    covarianceMatrix = covarianceMatrix + noiseMatrix;
+
     covarianceChol = CholeskyMaster::choleskyDecomposition(covarianceMatrix);
 
     auto tempSpace = LinearSpace(space);

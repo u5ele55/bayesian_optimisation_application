@@ -3,11 +3,12 @@
 
 #include "backward_solution/BayesianOptimizer.h"
 #include "backward_solution/kernel/SquaredExponentialKernel.h"
-#include "forward_problem/RK4Solver.h"
+#include "forward_problem/RK4SolverWithNoise.h"
 
 int main() {
     System initial(0.8, 0.5, 0.4, 0.8);
-    RK4ForwardSolver solver(initial);
+    double stddev = 1;
+    RK4SolverWithNoise solver(initial, stddev);
     LinearSpace space{};
     Dimension omega = {0.2, 0.9, 0.1},
         dissipationCoef = {0.2, 1, 0.1},

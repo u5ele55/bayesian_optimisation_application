@@ -31,5 +31,7 @@ public:
 
     Vector &operator=(const Vector &other);
 
+    bool operator==(const Vector &other) const;
+
     double dot(const Vector &other);
 };

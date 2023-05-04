@@ -14,8 +14,8 @@ Vector RK4SolverWithNoise::getState(double time)
     std::random_device rd; 
     std::mt19937 gen(rd()); 
     
-    std::normal_distribution<double> d(0, stddev); 
-    double noise1 = d(gen), noise2 = d(gen); 
+    std::normal_distribution<double> normalDistr(0, stddev); 
+    double noise1 = normalDistr(gen), noise2 = normalDistr(gen); 
 
     return pureState + Vector{noise1, noise2};
 }

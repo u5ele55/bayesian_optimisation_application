@@ -7,7 +7,7 @@
 
 int main() {
     System initial(0.8, 0.5, 0.4, 0.8);
-    double stddev = 1;
+    double stddev = 0.05;
     RK4SolverWithNoise solver(initial, stddev);
     LinearSpace space{};
     Dimension omega = {0.2, 0.9, 0.1},
@@ -29,15 +29,15 @@ int main() {
 
 
     auto priorY = std::vector<double>(priorX.size());
-    PendulumMSE mse(solver, 200);
+    PendulumMSE mse(solver, 50);
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = mse(priorX[i]);
     }
     auto *kernel = new SquaredExponentialKernel(3);
-    GaussianProcesses gp(priorX, priorY, space, kernel);
+    GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
 
     BayesianOptimizer bo(mse, gp);
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 30; i++) {
         std::cout << "Step " << i << " started\n";
         auto prediction = bo.step();
         std::cout << i << ": " << prediction << std::endl;

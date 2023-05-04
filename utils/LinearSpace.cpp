@@ -61,3 +61,7 @@ Vector LinearSpace::at(int i)
     }
     return next();
 }
+
+size_t LinearSpace::dimensions() {
+    return dims + 1;
+}

@@ -20,7 +20,7 @@ double PendulumMSE::operator()(const Vector &v) const {
 
     for(int i = 0; i < pointsQuantity; i ++) {
         double trueValue = solver.getState(step * i)[0];
-        double compareValue = solver.getState(step * i)[0];
+        double compareValue = compSolver.getState(step * i)[0];
         res += (trueValue - compareValue) * (trueValue - compareValue);
     }
     res /= static_cast<double>(pointsQuantity);

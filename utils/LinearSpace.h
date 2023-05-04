@@ -25,6 +25,9 @@ public:
     size_t size();
 
     Vector at(int i);
+
+    size_t dimensions();
+
 protected:
     std::vector<Dimension> space;
     Vector position;

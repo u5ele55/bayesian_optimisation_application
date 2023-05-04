@@ -13,6 +13,7 @@ public:
     BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp);
 
     Vector step();
+    Vector getArgmin();
 private:
     Vector acquisitionUCB(const Vector &mean, Vector stddev, double devCoef = 1);
 
@@ -20,4 +21,6 @@ private:
     PendulumMSE &f;
     // std::vector<Vector> initX; 
     GaussianProcesses &gp;
+    Vector argmin;
+    double fMin;
 };

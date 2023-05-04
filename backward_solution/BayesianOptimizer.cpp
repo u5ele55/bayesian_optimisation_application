@@ -24,7 +24,6 @@ Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, doub
     for (int i = 0; i < space.size(); i++) {
         auto value = mean[i] - stddev[i] * devCoef;
         if (value <= minValue) {
-            std::cerr << "NEW MIN FOUND!\n";
             minPoint = thisValue;
             minValue = value;
         }

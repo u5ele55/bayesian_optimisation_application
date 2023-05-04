@@ -15,14 +15,14 @@
 #include <cmath>
 
 int main() {
-    System initial(0.9, 0.5, 0, 0.8);
+    System initial(0.9, 0.5, 0.4, 0.8);
     RK4ForwardSolver solver(initial);
     LinearSpace space{};
-    space.addBoundary({0.6, 1, 0.1}); // omega
-    space.addBoundary({0.3, 0.6, 0.1}); // dissipation coefficient
+    space.addBoundary({0.5, 1, 0.1}); // omega
+    space.addBoundary({0, 1, 0.1}); // dissipation coefficient
     // space.addBoundary({0, M_PI_2, 0.2}); // initial angle
-    space.addBoundary({0, 1, 0.2}); // initial angle
-    space.addBoundary({0.4, 1, 0.2}); // initial angular speed
+    space.addBoundary({0, 1, 0.1}); // initial angle
+    space.addBoundary({0, 1, 0.1}); // initial angular speed
 
     std::vector<Vector> X = {
             {0, 0, 0, 0},
@@ -38,7 +38,7 @@ int main() {
     for (int i = 0; i < y.size(); i++) {
         y[i] = mse(X[i]);
     }
-    auto *kernel = new SquaredExponentialKernel();
+    auto *kernel = new SquaredExponentialKernel(5);
     // std::cout << space.size() << "\n";
     // exit(0);
     GaussianProcesses gp(X, y, space, kernel);

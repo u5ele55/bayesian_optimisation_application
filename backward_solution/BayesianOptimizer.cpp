@@ -17,14 +17,14 @@ BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
 Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, double devCoef)
 {
     auto space = gp.getSpace();
-    long double minValue = mean[0];
-    Vector minPoint(space.dimensions());
-
+    double minValue = mean[0] - stddev[0] * devCoef;
     space.clear();
     Vector thisValue = space.next();
+    Vector minPoint(thisValue);
     for (int i = 0; i < space.size(); i++) {
         auto value = mean[i] - stddev[i] * devCoef;
         if (value <= minValue) {
+            std::cerr << "NEW MIN FOUND!\n";
             minPoint = thisValue;
             minValue = value;
         }
@@ -45,7 +45,7 @@ Vector BayesianOptimizer::step() {
         stddev[i] = sqrt(prediction.second.at(i, i));
     }
     std::cout << "Going through space to find min...\n";
-    auto x = acquisitionUCB(mean, stddev);
+    auto x = acquisitionUCB(mean, stddev, 2);
     double y = f(x);
     std::cout << "Fitting new data: " << y << "\n";
     gp.fit(x, y);

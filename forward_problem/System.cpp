@@ -3,7 +3,8 @@
 #include <cmath>
 
 System::System(double omega, double dissipationCoefficient, double initialAngle, double initialAngularSpeed)
-        : omegaSquared(omega * omega), dissipationCoefficient(dissipationCoefficient),
+        : omegaSquared(omega * omega),
+          dissipationCoefficient(dissipationCoefficient),
           initialState({initialAngle, initialAngularSpeed}) {}
 
 void System::f(Vector &state) const {

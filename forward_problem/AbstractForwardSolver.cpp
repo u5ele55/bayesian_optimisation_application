@@ -1,7 +1,9 @@
 #include "AbstractForwardSolver.h"
 
 AbstractForwardSolver::AbstractForwardSolver(System &system, double step)
-        : step(step), system(system), state(system.getInitialState().getShape().first) {}
+        : step(step),
+          system(system),
+          state(system.getInitialState().getShape().first) {}
 
 Vector AbstractForwardSolver::getState(double time) {
     for (int i = 0; i < state.getShape().first; i++) {

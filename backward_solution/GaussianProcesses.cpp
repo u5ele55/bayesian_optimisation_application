@@ -8,8 +8,14 @@
 
 GaussianProcesses::GaussianProcesses(const std::vector<Vector> &priorX, std::vector<double> priorY, LinearSpace &space,
                                      IKernel *kernel, double noise)
-        : kernel(kernel), noise(noise), x(priorX), y(priorY), covarianceMatrix(x.size(), x.size()),
-          covarianceChol(x.size(), x.size()), space(space), aposteriorCovariance(space.size(), space.size()),
+        : kernel(kernel),
+          noise(noise),
+          x(priorX),
+          y(priorY),
+          covarianceMatrix(x.size(), x.size()),
+          covarianceChol(x.size(), x.size()),
+          space(space),
+          aposteriorCovariance(space.size(), space.size()),
           influenceCovariance(space.size(), x.size()) {
     std::cout << "Constructing GP...\n";
     for (int i = 0; i < x.size(); i++) {

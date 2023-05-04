@@ -7,7 +7,10 @@
 #include <iostream>
 
 BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
-        : f(f), gp(gp), argmin(gp.getSpace().dimensions()), fMin(1e300) {
+        : f(f),
+          gp(gp),
+          argmin(gp.getSpace().dimensions()),
+          fMin(1e300) {
 }
 
 Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, double devCoef) {

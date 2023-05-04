@@ -1,8 +1,11 @@
 #include "RK4Solver.h"
 
 RK4ForwardSolver::RK4ForwardSolver(System &system, double step)
-        : AbstractForwardSolver(system, step), k1(state.getShape().first), k2(state.getShape().first),
-          k3(state.getShape().first), k4(state.getShape().first) {}
+        : AbstractForwardSolver(system, step),
+          k1(state.getShape().first),
+          k2(state.getShape().first),
+          k3(state.getShape().first),
+          k4(state.getShape().first) {}
 
 void RK4ForwardSolver::methodStep(Vector &state, double step) {
     k1 = state;

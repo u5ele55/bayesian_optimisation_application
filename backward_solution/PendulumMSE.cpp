@@ -7,7 +7,9 @@
 #include <cmath>
 
 PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, size_t pointsQuantity, double step)
-        : pointsQuantity(pointsQuantity), step(step), trueValues(pointsQuantity) {
+        : pointsQuantity(pointsQuantity),
+          step(step),
+          trueValues(pointsQuantity) {
     for (int i = 0; i < pointsQuantity; i++) {
         trueValues[i] = solver.getState(step * i)[0];
     }

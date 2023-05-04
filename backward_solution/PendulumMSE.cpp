@@ -10,7 +10,12 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, size_t pointsQuantity, d
     : solver(solver)
     , pointsQuantity(pointsQuantity)
     , step(step)
-{}
+    , trueValues(pointsQuantity)
+{
+    for(int i = 0; i < pointsQuantity; i ++) {
+        trueValues[i] = solver.getState(step * i)[0];
+    }
+}
 
 double PendulumMSE::operator()(const Vector &v) const {
     double res = 0;
@@ -19,9 +24,8 @@ double PendulumMSE::operator()(const Vector &v) const {
     auto compSolver = RK4ForwardSolver(compareSystem);
 
     for(int i = 0; i < pointsQuantity; i ++) {
-        double trueValue = solver.getState(step * i)[0];
         double compareValue = compSolver.getState(step * i)[0];
-        res += (trueValue - compareValue) * (trueValue - compareValue);
+        res += (trueValues[i] - compareValue) * (trueValues[i] - compareValue);
     }
     res /= static_cast<double>(pointsQuantity);
     res = sqrt(res);

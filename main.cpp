@@ -19,10 +19,10 @@ int main() {
     RK4ForwardSolver solver(initial);
     LinearSpace space{};
     space.addBoundary({0.5, 1, 0.1}); // omega
-    space.addBoundary({0, 1, 0.1}); // dissipation coefficient
+    space.addBoundary({0.2, 1, 0.1}); // dissipation coefficient
     // space.addBoundary({0, M_PI_2, 0.2}); // initial angle
-    space.addBoundary({0, 1, 0.1}); // initial angle
-    space.addBoundary({0, 1, 0.1}); // initial angular speed
+    space.addBoundary({0, 1, 0.2}); // initial angle
+    space.addBoundary({0, 1, 0.2}); // initial angular speed
 
     std::vector<Vector> X = {
             {0, 0, 0, 0},

@@ -7,12 +7,8 @@
 #include <cmath>
 
 PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, size_t pointsQuantity, double step)
-    : solver(solver)
-    , pointsQuantity(pointsQuantity)
-    , step(step)
-    , trueValues(pointsQuantity)
-{
-    for(int i = 0; i < pointsQuantity; i ++) {
+        : pointsQuantity(pointsQuantity), step(step), trueValues(pointsQuantity) {
+    for (int i = 0; i < pointsQuantity; i++) {
         trueValues[i] = solver.getState(step * i)[0];
     }
 }
@@ -23,7 +19,7 @@ double PendulumMSE::operator()(const Vector &v) const {
     auto compareSystem = System(v[0], v[1], v[2], v[3]);
     auto compSolver = RK4ForwardSolver(compareSystem);
 
-    for(int i = 0; i < pointsQuantity; i ++) {
+    for (int i = 0; i < pointsQuantity; i++) {
         double compareValue = compSolver.getState(step * i)[0];
         res += (trueValues[i] - compareValue) * (trueValues[i] - compareValue);
     }

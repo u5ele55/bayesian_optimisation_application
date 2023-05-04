@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "../forward_problem/AbstractForwardSolver.h"
 
 #include <vector>
@@ -11,9 +12,9 @@ class PendulumMSE {
 public:
     PendulumMSE(AbstractForwardSolver &solver, size_t pointsQuantity, double step = 0.1);
 
-    double operator() (const Vector &v) const;
+    double operator()(const Vector &v) const;
+
 private:
-    AbstractForwardSolver &solver;
     size_t pointsQuantity;
     double step;
     std::vector<double> trueValues;

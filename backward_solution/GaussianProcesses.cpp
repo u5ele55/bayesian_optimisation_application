@@ -6,20 +6,14 @@
 #include "../utils/CholeskyMaster.h"
 #include <iostream>
 
-GaussianProcesses::GaussianProcesses(const std::vector<Vector> &apriorX, std::vector<double> apriorY, LinearSpace &space, IKernel *kernel, double noise)
-    : kernel(kernel)
-    , noise(noise)
-    , x(apriorX)
-    , y(apriorY)
-    , covarianceMatrix(x.size(), x.size())
-    , covarianceChol(x.size(), x.size())
-    , space(space)
-    , aposteriorCovariance(space.size(), space.size())
-    , influenceCovariance(space.size(), x.size())
-{
+GaussianProcesses::GaussianProcesses(const std::vector<Vector> &priorX, std::vector<double> priorY, LinearSpace &space,
+                                     IKernel *kernel, double noise)
+        : kernel(kernel), noise(noise), x(priorX), y(priorY), covarianceMatrix(x.size(), x.size()),
+          covarianceChol(x.size(), x.size()), space(space), aposteriorCovariance(space.size(), space.size()),
+          influenceCovariance(space.size(), x.size()) {
     std::cout << "Constructing GP...\n";
-    for(int i = 0; i < x.size(); i ++) {
-        for(int j = 0; j < i+1; j ++) {
+    for (int i = 0; i < x.size(); i++) {
+        for (int j = 0; j < i + 1; j++) {
             covarianceMatrix.at(i, j) = (*kernel)(x[i], x[j]);
             covarianceMatrix.at(j, i) = covarianceMatrix.at(i, j);
         }
@@ -28,31 +22,30 @@ GaussianProcesses::GaussianProcesses(const std::vector<Vector> &apriorX, std::ve
 
     auto tempSpace = LinearSpace(space);
     space.clear();
-    for (size_t i = 0; i < space.size(); i ++) {
+    for (size_t i = 0; i < space.size(); i++) {
         if (i % 1000 == 0) {
-            std::cout << "GP aposteriorCov created " << i << "/" << space.size() << " rows\n";
+            std::cout << "GP posteriorCov created " << i << "/" << space.size() << " rows\n";
         }
         auto a = space.next();
-        for(size_t j = 0; j < x.size(); j ++) {
-            influenceCovariance.at(i,j) = (*kernel)(a, x[j]);
+        for (size_t j = 0; j < x.size(); j++) {
+            influenceCovariance.at(i, j) = (*kernel)(a, x[j]);
         }
         tempSpace.clear();
-        for (size_t j = 0; j < tempSpace.size(); j ++) {
+        for (size_t j = 0; j < tempSpace.size(); j++) {
             auto b = tempSpace.next();
-            aposteriorCovariance.at(i,j) = (*kernel)(a,b);
+            aposteriorCovariance.at(i, j) = (*kernel)(a, b);
         }
     }
     std::cout << "GP created!!!!!\n";
 }
 
-void GaussianProcesses::fit(Vector newX, double newY)
-{
+void GaussianProcesses::fit(const Vector &newX, double newY) {
     x.push_back(newX);
     y.push_back(newY);
     covarianceMatrix.resize(x.size(), x.size());
 
-    int i = x.size()-1;
-    for(int j = 0; j < x.size(); j ++) {
+    int i = x.size() - 1;
+    for (int j = 0; j < x.size(); j++) {
         covarianceMatrix.at(i, j) = (*kernel)(x[i], x[j]);
         covarianceMatrix.at(j, i) = covarianceMatrix.at(i, j);
     }
@@ -60,24 +53,13 @@ void GaussianProcesses::fit(Vector newX, double newY)
 
     space.clear();
     influenceCovariance.resize(space.size(), x.size());
-    for (size_t j = 0; j < space.size(); j ++) {
+    for (size_t j = 0; j < space.size(); j++) {
         auto a = space.next();
         influenceCovariance.at(j, i) = (*kernel)(a, x[i]);
     }
 }
 
-std::vector<Vector> &GaussianProcesses::getX()
-{
-    return x;
-}
-
-std::vector<double> &GaussianProcesses::getY()
-{
-    return y;
-}
-
-std::pair<Vector, Matrix> GaussianProcesses::predict()
-{
+std::pair<Vector, Matrix> GaussianProcesses::predict() {
     auto vy = Vector(y);
     auto covarianceInvertedDataY = CholeskyMaster::solveCholesky(covarianceChol, vy);
 
@@ -89,7 +71,6 @@ std::pair<Vector, Matrix> GaussianProcesses::predict()
     return {mean, conditionalCovariance};
 }
 
-LinearSpace &GaussianProcesses::getSpace()
-{
+LinearSpace &GaussianProcesses::getSpace() {
     return space;
 }

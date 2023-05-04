@@ -7,15 +7,10 @@
 #include <iostream>
 
 BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
-    : f(f)
-    , gp(gp)
-    , argmin(gp.getSpace().dimensions())
-    , fMin(1e300)
-{
+        : f(f), gp(gp), argmin(gp.getSpace().dimensions()), fMin(1e300) {
 }
 
-Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, double devCoef)
-{
+Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, double devCoef) {
     auto space = gp.getSpace();
     double minValue = mean[0] - stddev[0] * devCoef;
     space.clear();
@@ -34,19 +29,19 @@ Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, doub
 }
 
 Vector BayesianOptimizer::step() {
-    std::cout << "Prediction calculation... \n";
+    // std::cout << "Prediction calculation... \n";
     auto prediction = gp.predict();
-    std::cout << "Predicted!\n";
+    // std::cout << "Predicted!\n";
     auto mean = prediction.first;
     Vector stddev = Vector(mean.getShape().first);
 
     for (int i = 0; i < stddev.getShape().first; i++) {
         stddev[i] = sqrt(prediction.second.at(i, i));
     }
-    std::cout << "Going through space to find min...\n";
-    auto x = acquisitionUCB(mean, stddev, 2);
+    // std::cout << "Going through space to find min...\n";
+    auto x = acquisitionUCB(mean, stddev, 3);
     double y = f(x);
-    std::cout << "Fitting new data: " << y << "\n";
+    std::cout << "Fitting new data with function value " << y << "\n";
     gp.fit(x, y);
     if (y < fMin) {
         argmin = x;

@@ -1,45 +1,40 @@
 #include "Vector.h"
 
-Vector::Vector(int n) 
-    : Matrix(n, 1) {}
+Vector::Vector(int n)
+        : Matrix(n, 1) {}
 
-Vector::Vector(std::initializer_list<double> list) 
-    : Matrix(list.size(), 1)
-{
+Vector::Vector(std::initializer_list<double> list)
+        : Matrix(list.size(), 1) {
     int i = 0;
-    for (auto p = list.begin(); p != list.end(); p ++) {
+    for (auto p = list.begin(); p != list.end(); p++) {
         at(i, 0) = *p;
         i++;
     }
 }
 
 Vector::Vector(std::vector<double> l)
-    : Matrix(l.size(), 1)
-{
-    for(int i = 0; i < l.size(); i ++) {
+        : Matrix(l.size(), 1) {
+    for (int i = 0; i < l.size(); i++) {
         data[i][0] = l[i];
     }
 }
 
 Vector::Vector(const Matrix &matrix, int column)
-    : Matrix(matrix.getShape().first, 1)
-{
+        : Matrix(matrix.getShape().first, 1) {
     if (matrix.getShape().second <= column) {
         throw std::invalid_argument("Invalid column number!");
     }
 
-    for(int i = 0; i < matrix.getShape().first; i ++) {
+    for (int i = 0; i < matrix.getShape().first; i++) {
         data[i][0] = matrix.at(i, column);
     }
 }
 
-double& Vector::operator[](int n)
-{
+double &Vector::operator[](int n) {
     return at(n, 0);
 }
 
-double Vector::operator[](int n) const
-{
+double Vector::operator[](int n) const {
     return at(n, 0);
 }
 
@@ -48,17 +43,16 @@ Vector::operator bool() const {
 }
 
 double Vector::dot(const Vector &other) {
-    return (this->transpose() * other).at(0,0);
+    return (this->transpose() * other).at(0, 0);
 }
 
 Vector Vector::operator-(const Vector &other) const {
     return *this + (-other);
 }
 
-Vector Vector::operator*(double val) const
-{
+Vector Vector::operator*(double val) const {
     Vector res(n);
-    for(int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         res[i] = data[i][0] * val;
     }
     return res;
@@ -96,8 +90,8 @@ Vector &Vector::operator+=(const Vector &other) {
         throw std::invalid_argument("Vector::operator+=: Wrong sizes");
     }
 
-    for(int i = 0; i < n; i ++) {
-        for(int j = 0; j < m; j ++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             data[i][j] += other.data[i][j];
         }
     }
@@ -107,8 +101,8 @@ Vector &Vector::operator+=(const Vector &other) {
 
 Vector &Vector::operator=(const Vector &other) {
     resize(other.n, other.m);
-    for(int i = 0; i < other.n; i ++) {
-        for(int j = 0; j < other.m; j ++) {
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
             data[i][j] = other.data[i][j];
         }
     }

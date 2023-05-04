@@ -4,11 +4,12 @@
 
 class System {
 public:
-    System(double omega, double dissipationCoefficient, double initial_angle, double initial_angular_speed);
+    System(double omega, double dissipationCoefficient, double initialAngle, double initialAngularSpeed);
 
     void f(Vector &state) const;
 
     Vector getInitialState() const;
+
 private:
     double omegaSquared;
     double dissipationCoefficient;

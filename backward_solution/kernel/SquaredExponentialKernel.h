@@ -4,13 +4,15 @@
 
 #pragma once
 
-#include "kernel/IKernel.h"
+#include "IKernel.h"
 #include <cmath>
 
 class SquaredExponentialKernel : public IKernel {
 public:
     explicit SquaredExponentialKernel(double sigma = 1, double length = 1);
-    double operator() (const Vector &a, const Vector &b) const final;
+
+    double operator()(const Vector &a, const Vector &b) const final;
+
 private:
     double sigma;
     double length;

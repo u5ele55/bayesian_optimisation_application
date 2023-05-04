@@ -6,23 +6,22 @@
 
 #include "kernel/IKernel.h"
 #include "../utils/Vector.h"
-#include "LinearSpace.h"
+#include "../utils/LinearSpace.h"
 #include <vector>
 
 class GaussianProcesses {
 public:
-    GaussianProcesses(const std::vector<Vector> &apriorX, std::vector<double> apriorY, LinearSpace &space, IKernel *kernel, double noise = 3e-7);
-    
-    void fit(Vector newX, double newY);
+    GaussianProcesses(const std::vector<Vector> &priorX, std::vector<double> priorY, LinearSpace &space,
+                      IKernel *kernel, double noise = 3e-7);
 
-    std::vector<Vector> &getX();
-    std::vector<double> &getY();
+    void fit(const Vector &newX, double newY);
 
     /// @brief predicts gaussian distribution
     /// @return pair of mean, covariance matrix
-    std::pair< Vector, Matrix > predict();
+    std::pair<Vector, Matrix> predict();
 
     LinearSpace &getSpace();
+
 private:
     IKernel *kernel;
     double noise;

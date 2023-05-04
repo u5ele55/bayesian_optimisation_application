@@ -3,9 +3,10 @@
 //
 
 #pragma once
-#include "Vector.h"
+
+#include "../../utils/Vector.h"
 
 class IKernel {
 public:
-    virtual double operator () (const Vector &a, const Vector &b) const = 0;
+    virtual double operator()(const Vector &a, const Vector &b) const = 0;
 };

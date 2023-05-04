@@ -73,7 +73,7 @@ Vector BayesianOptimizer::step() {
     for (int i = 0; i < stddev.getShape().first; i++) {
         stddev[i] = sqrt(prediction.second.at(i, i));
     }
-    auto x = acquisitionUCB(mean, stddev, 3);
+    auto x = acquisitionUCB(mean, stddev, 2);
     double y = f(x);
     std::cout << "Fitting new data with function value " << y << "\n";
     gp.fit(x, y);

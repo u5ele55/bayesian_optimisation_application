@@ -7,7 +7,7 @@
 
 int main() {
     System initial(0.8, 0.5, 0.4, 0.8);
-    double stddev = 0.05;
+    double stddev = 0.01;
     RK4SolverWithNoise solver(initial, stddev);
     LinearSpace space{};
     Dimension omega = {0.2, 0.9, 0.1},

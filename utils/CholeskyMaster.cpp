@@ -17,7 +17,6 @@ Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A)
             for (int j = 0; j < k; j ++) {
                 sum = std::fma(ans.at(i, j), ans.at(k, j), sum);
             }
-            std::cout << "sum = " << sum << "\n";
             if (i == k) {
                 ans.at(i, k) = sqrtl(A.at(i,i) - sum);
             } else {

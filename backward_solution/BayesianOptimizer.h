@@ -5,17 +5,19 @@
 #pragma once
 
 #include "GaussianProcesses.h"
+#include "PendulumMSE.h"
 #include <functional>
 
 class BayesianOptimizer {
 public:
-    BayesianOptimizer(std::function<double(Vector)> f, GaussianProcesses gp);
+    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp);
+
+    Vector step();
+private:
+    Vector acquisitionUCB(const Vector &mean, Vector stddev, double devCoef = 1);
 
 private:
-    Vector acquisitionUCB(const Vector &mean, std::vector<Vector> stddev);
-
-private:
-    std::function<double(Vector)> f; 
+    PendulumMSE &f;
     // std::vector<Vector> initX; 
-    GaussianProcesses gp;
+    GaussianProcesses &gp;
 };

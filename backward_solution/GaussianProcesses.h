@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "IKernel.h"
+#include "kernel/IKernel.h"
 #include "../utils/Vector.h"
 #include "LinearSpace.h"
 #include <vector>

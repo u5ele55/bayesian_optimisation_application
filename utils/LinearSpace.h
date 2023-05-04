@@ -4,7 +4,7 @@
 
 #pragma once
 #include <vector>
-#include "../utils/Vector.h"
+#include "Vector.h"
 
 struct Dimension {
     double min;

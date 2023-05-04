@@ -2,15 +2,15 @@
 
 #include <cmath>
 
-System::System(double omega, double dissipation_coeffitient, double initial_angle, double initial_angular_speed)
+System::System(double omega, double dissipationCoefficient, double initial_angle, double initial_angular_speed)
     : omegaSquared(omega*omega)
-    , dissipationCoeffitient(dissipation_coeffitient)
+    , dissipationCoefficient(dissipationCoefficient)
     , initialState({initial_angle, initial_angular_speed})
 {}
 
 void System::f(Vector &state) const
 {
-    double acceleration = -dissipationCoeffitient * state[1] - omegaSquared * sin(state[0]);
+    double acceleration = -dissipationCoefficient * state[1] - omegaSquared * sin(state[0]);
     state[0] = state[1];       // d_angle = speed
     state[1] = acceleration;   // d_speed = acceleration
 }

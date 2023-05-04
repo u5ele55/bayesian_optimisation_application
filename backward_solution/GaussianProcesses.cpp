@@ -17,7 +17,6 @@ GaussianProcesses::GaussianProcesses(const std::vector<Vector> &apriorX, std::ve
     , aposteriorCovariance(space.size(), space.size())
     , influenceCovariance(space.size(), x.size())
 {
-    
     for(int i = 0; i < x.size(); i ++) {
         for(int j = 0; j < i+1; j ++) {
             covarianceMatrix.at(i, j) = (*kernel)(x[i], x[j]);

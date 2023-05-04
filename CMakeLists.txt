@@ -10,11 +10,11 @@ include_directories(utils)
 add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
-        backward_solution/IKernel.h
-        backward_solution/LinearSpace.cpp
-        backward_solution/LinearSpace.h
-        backward_solution/SquaredExponentialKernel.cpp
-        backward_solution/SquaredExponentialKernel.h
+        backward_solution/kernel/IKernel.h
+        utils/LinearSpace.cpp
+        utils/LinearSpace.h
+        backward_solution/kernel/SquaredExponentialKernel.cpp
+        backward_solution/kernel/SquaredExponentialKernel.h
         forward_problem/AbstractForwardSolver.cpp
         forward_problem/AbstractForwardSolver.h
         forward_problem/RK4Solver.cpp
@@ -27,4 +27,4 @@ add_executable(bayesian_optimisation_application
         utils/Matrix.h
         utils/Vector.cpp
         utils/Vector.h
-        main.cpp)
+        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/PendulumMSE.cpp backward_solution/PendulumMSE.h)

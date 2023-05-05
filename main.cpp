@@ -6,7 +6,7 @@
 #include "forward_problem/RK4SolverWithNoise.h"
 
 int main() {
-    System initial(0.8, 0.5, 0.4, 0.8);
+    System initial(0.5, 0.3, 0.6, 0.2);
     double stddev = 0.01;
     RK4SolverWithNoise solver(initial, stddev);
     LinearSpace space{};
@@ -29,7 +29,7 @@ int main() {
 
 
     auto priorY = std::vector<double>(priorX.size());
-    PendulumMSE mse(solver, 50);
+    PendulumMSE mse(solver);
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = mse(priorX[i]);
     }
@@ -37,7 +37,7 @@ int main() {
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
 
     BayesianOptimizer bo(mse, gp);
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 50; i++) {
         std::cout << "Step " << i << " started\n";
         auto prediction = bo.step();
         std::cout << i << ": " << prediction << std::endl;

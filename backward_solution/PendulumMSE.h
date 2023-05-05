@@ -10,7 +10,7 @@
 
 class PendulumMSE {
 public:
-    PendulumMSE(AbstractForwardSolver &solver, size_t pointsQuantity, double step = 0.1);
+    PendulumMSE(AbstractForwardSolver &solver, double step = 0.1);
 
     double operator()(const Vector &v) const;
 

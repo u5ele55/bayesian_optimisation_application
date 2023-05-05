@@ -5,14 +5,31 @@
 #include "PendulumMSE.h"
 #include "../forward_problem/RK4Solver.h"
 #include <cmath>
+#include <iostream>
 
-PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, size_t pointsQuantity, double step)
-        : pointsQuantity(pointsQuantity),
-          step(step),
-          trueValues(pointsQuantity) {
-    for (int i = 0; i < pointsQuantity; i++) {
-        trueValues[i] = solver.getState(step * i)[0];
+#define MAX_POINT_QUANTITY 1000
+#define MIN_POINT_QUANTITY 10
+#define EPS 0.05
+
+PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
+        : step(step),
+          pointsQuantity(0) {
+    
+    for (int i = 0; i < MAX_POINT_QUANTITY; i++) {
+        double value = solver.getState(step * i)[0];
+        if (i > MIN_POINT_QUANTITY && fabs(value) < EPS) {
+            double derivative = (value - trueValues[pointsQuantity-1]) / step;
+            if (fabs(derivative) < EPS) {
+                std::cout << "Reached " << i * step << " time, breaking here \n";
+                std::cout << value << " " << derivative << '\n';
+                break;
+            }
+        }
+        pointsQuantity ++;
+        trueValues.push_back(value);
     }
+
+    std::cout << "Result pointQuantity in MSE: " << pointsQuantity << '\n';
 }
 
 double PendulumMSE::operator()(const Vector &v) const {

@@ -6,14 +6,14 @@
 #include "forward_problem/RK4SolverWithNoise.h"
 
 int main() {
-    System initial(0.5, 0.3, 0.6, 0.2);
-    double stddev = 0.01;
+    System initial(0.6, 0.9, M_PI_2, 0);
+    double stddev = 0.05;
     RK4SolverWithNoise solver(initial, stddev);
     LinearSpace space{};
-    Dimension omega = {0.2, 0.9, 0.1},
+    Dimension omega = {0, 1, 0.1},
         dissipationCoef = {0.2, 1, 0.1},
-        initialAngle = {0, 1, 0.2},
-        initialAngularSpeed = {0, 1, 0.2};
+        initialAngle = {M_PI_4, M_PI_2, M_PI_4 / 4},
+        initialAngularSpeed = {0, 0.8, 0.1};
 
     space.addBoundary(omega);
     space.addBoundary(dissipationCoef);

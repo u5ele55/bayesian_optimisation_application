@@ -17,6 +17,9 @@ public:
     Vector getArgmin();
 
 private:
+    /**
+     * Sample of acquisition function
+     * */
     Vector acquisitionUCB(const Vector &mean, Vector stddev, double devCoef = 1);
 
     Vector findRandomUncheckedPoint(LinearSpace &space);

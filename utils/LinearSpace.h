@@ -19,13 +19,20 @@ public:
 
     void addBoundary(Dimension dimension);
 
+    /**
+     * Iterates throw linear space
+     * @return current step
+     * */
     Vector next();
 
+    /**
+     * Clears the iterator
+     * */
     void clear();
 
     size_t size();
 
-    Vector at(int i);
+    Vector at(size_t i);
 
     size_t dimensions();
 

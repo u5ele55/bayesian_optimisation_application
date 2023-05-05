@@ -9,7 +9,7 @@
 
 #define MAX_POINT_QUANTITY 1000
 #define MIN_POINT_QUANTITY 10
-#define EPS 0.05
+#define EPS 0.03
 
 PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
         : step(step),

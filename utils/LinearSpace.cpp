@@ -50,10 +50,9 @@ size_t LinearSpace::size() {
     return res;
 }
 
-Vector LinearSpace::at(int i) {
+Vector LinearSpace::at(size_t i) {
     clear();
-    // TODO
-    for (int j = 0; j < i; j++) {
+    for (size_t j = 0; j < i; j++) {
         next();
     }
     return next();

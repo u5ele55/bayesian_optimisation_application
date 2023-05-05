@@ -18,7 +18,6 @@ public:
 
     explicit operator bool() const;
 
-
     Vector operator+(const Vector &other) const;
 
     Vector operator-() const;
@@ -33,5 +32,8 @@ public:
 
     bool operator==(const Vector &other) const;
 
+    /**
+     * @return dot product of the vectors
+     * */
     double dot(const Vector &other);
 };

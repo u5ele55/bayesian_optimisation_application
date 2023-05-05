@@ -9,7 +9,6 @@
 GaussianProcesses::GaussianProcesses(const std::vector<Vector> &priorX, std::vector<double> priorY, LinearSpace &space,
                                      IKernel *kernel, double noise)
         : kernel(kernel),
-          noise(noise),
           x(priorX),
           y(priorY),
           covarianceMatrix(x.size(), x.size()),

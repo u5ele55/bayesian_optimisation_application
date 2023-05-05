@@ -23,8 +23,6 @@ Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A) {
             }
         }
     }
-    // std::cout << "L = " << ans << "\n";
-    // exit(0);
     return ans;
 }
 

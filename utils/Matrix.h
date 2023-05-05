@@ -14,7 +14,9 @@ public:
 
     void resize(int n, int m);
 
-    /// @brief Puts `column` at matrix `index` column
+    /**
+     * Puts `column` at matrix `index` column
+     * */
     void emplaceColumn(const Matrix &column, int index);
 
     std::pair<int, int> getShape() const;

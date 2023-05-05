@@ -14,17 +14,21 @@ public:
     GaussianProcesses(const std::vector<Vector> &priorX, std::vector<double> priorY, LinearSpace &space,
                       IKernel *kernel, double noise = 3e-7);
 
+    /**
+     * Adds newX and newY into gaussian processes for next prediction
+     * */
     void fit(const Vector &newX, double newY);
 
-    /// @brief predicts gaussian distribution
-    /// @return pair of mean, covariance matrix
+    /**
+     * Predicts gaussian distribution
+     * @return pair of mean, covariance matrix
+     * */
     std::pair<Vector, Matrix> predict();
 
     LinearSpace &getSpace();
 
 private:
     IKernel *kernel;
-    double noise;
     std::vector<Vector> x;
     std::vector<double> y;
     Matrix covarianceMatrix;

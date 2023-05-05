@@ -1,13 +1,17 @@
 # personal
 .vscode
+.idea
+cmake-build-debug
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
+# C++ extensions
+*.o
+*.exe
+
 
 # Distribution / packaging
 .Python

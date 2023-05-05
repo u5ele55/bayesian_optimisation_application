@@ -7,24 +7,24 @@
 #include "forward_problem/RK4SolverWithNoise.h"
 #include "utils/SolutionCache.h"
 
-void printSystem(const Vector &state, std::ofstream &output) {
-    output << state[0] << " " << state[1] << " " << state[2] << " " << state[3] << "\n";
-    auto solution = SolutionCache::getInstance().get(state);
-    output << solution.first << " " << solution.second.size() << "\n";
-    for (auto it : solution.second) {
+void printSystem(std::ofstream &output, const std::vector<double>& values) {
+    // output << state[0] << " " << state[1] << " " << state[2] << " " << state[3] << "\n";
+    // auto solution = SolutionCache::getInstance().get(state);
+    output << values.size() << "\n";
+    for (auto it : values) {
         output << it << "\n";
     }
 }
 
 int main() {
-    System initial{0.5, 0.7, M_PI_2, 1.1};
-    double stddev = 0.01;
+    System initial{0.9, 0.4, M_PI_2, 0.4};
+    double stddev = 0.05;
     RK4SolverWithNoise solver(initial, stddev);
 
     Dimension omega = {0.2, 1, 0.1},
         dissipationCoef = {0.2, 0.9, 0.1},
         initialAngle = {M_PI_4, M_PI_2, M_PI_4 / 4},
-        initialAngularSpeed = {1, 2, 0.1};
+        initialAngularSpeed = {0, 1, 0.1};
     LinearSpace space{};
     space.addBoundary(omega);
     space.addBoundary(dissipationCoef);
@@ -35,11 +35,15 @@ int main() {
 
     std::ofstream output;
     output.open("../output.txt");
-    printSystem(initial.getInitializer(), output); // print data with noise
-    mse(initial.getInitializer()); // solve system without noise
-    printSystem(initial.getInitializer(), output); // print data without noise
 
-    const int iterationsCount = 50;
+    double mseStep = mse.getStep();
+    output << mseStep << "\n";
+    printSystem(output, mse.getTrueValues()); // print data with noise
+    mse(initial.getInitializer()); // solve system without noise
+    auto initialValues = SolutionCache::getInstance().get(initial.getInitializer());
+    printSystem(output, initialValues); // print data without noise
+
+    const int iterationsCount = 30;
     output << iterationsCount << "\n";
 
     std::vector<Vector> priorX = {
@@ -60,10 +64,10 @@ int main() {
         std::cout << "Step " << i << " started\n";
         auto prediction = bo.step();
         std::cout << i << ": " << prediction << std::endl;
-        printSystem(prediction, output);
+        printSystem(output, SolutionCache::getInstance().get(prediction));
     }
     auto argmin = bo.getArgmin();
-    printSystem(argmin, output);
+    printSystem(output, SolutionCache::getInstance().get(argmin));
     std::cout << "Result point: \n" << argmin << '\n';
     std::cout << "Result MSE: " << mse(bo.getArgmin()) << '\n';
 

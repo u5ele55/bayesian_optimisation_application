@@ -16,10 +16,10 @@ public:
 
     static SolutionCache& getInstance();
 
-    void add(const Vector& initializer, double step, const std::vector<double> &solution);
+    void add(const Vector& initializer, const std::vector<double> &solution);
 
-    std::pair<double, std::vector<double>> get(const Vector &state);
+    std::vector<double> get(const Vector &state);
 private:
     SolutionCache() = default;
-    std::map<Vector, std::pair<double, std::vector<double>>> solutions;
+    std::map<Vector, std::vector<double>> solutions;
 };

@@ -14,6 +14,9 @@ public:
 
     double operator()(const Vector &v, bool cache = true) const;
 
+    std::vector<double> getTrueValues();
+
+    double getStep() const;
 private:
     size_t pointsQuantity;
     double step;

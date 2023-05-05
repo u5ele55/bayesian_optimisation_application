@@ -30,7 +30,7 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
         trueValues.push_back(value);
     }
     std::cout << "Result pointQuantity in MSE: " << pointsQuantity << '\n';
-    SolutionCache::getInstance().add(solver.getInitializer(), step, trueValues);
+    // SolutionCache::getInstance().add(solver.getInitializer(), step, trueValues);
 }
 
 double PendulumMSE::operator()(const Vector &v, bool cache) const {
@@ -39,8 +39,7 @@ double PendulumMSE::operator()(const Vector &v, bool cache) const {
     auto compareSystem = System(v[0], v[1], v[2], v[3]);
     auto compSolver = RK4ForwardSolver(compareSystem);
 
-    auto cached = SolutionCache::getInstance().get(v);
-    auto compareValues = cached.second;
+    auto compareValues = SolutionCache::getInstance().get(v);
     bool solve = compareValues.empty() && cache;
     if (solve) {
         compareValues = std::vector<double>(pointsQuantity);
@@ -56,7 +55,15 @@ double PendulumMSE::operator()(const Vector &v, bool cache) const {
     res = sqrt(res);
 
     if (cache) {
-        SolutionCache::getInstance().add(v, step, compareValues);
+        SolutionCache::getInstance().add(v, compareValues);
     }
     return res;
+}
+
+std::vector<double> PendulumMSE::getTrueValues() {
+    return trueValues;
+}
+
+double PendulumMSE::getStep() const {
+    return step;
 }

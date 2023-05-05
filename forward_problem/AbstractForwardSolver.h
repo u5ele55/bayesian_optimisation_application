@@ -10,6 +10,7 @@ public:
 
     virtual Vector getState(double time);
 
+    Vector getInitializer() const;
 protected:
     double step;
     System &system;

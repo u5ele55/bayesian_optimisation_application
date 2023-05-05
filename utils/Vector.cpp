@@ -122,3 +122,18 @@ bool Vector::operator==(const Vector &other) const
 
     return true;
 }
+
+bool Vector::operator<(const Vector &other) const {
+    if (other.getShape().first != n) {
+        return other.getShape().first < n;
+    }
+    for (size_t i = 0; i < n; i ++) {
+        if (at(i, 0) < other[i]) {
+            return true;
+        }
+        if (at(i, 0) > other[i]) {
+            return false;
+        }
+    }
+    return false;
+}

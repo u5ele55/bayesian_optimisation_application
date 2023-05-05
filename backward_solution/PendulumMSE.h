@@ -12,7 +12,7 @@ class PendulumMSE {
 public:
     PendulumMSE(AbstractForwardSolver &solver, double step = 0.1);
 
-    double operator()(const Vector &v) const;
+    double operator()(const Vector &v, bool cache = true) const;
 
 private:
     size_t pointsQuantity;

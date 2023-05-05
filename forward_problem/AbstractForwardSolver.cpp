@@ -24,3 +24,7 @@ Vector AbstractForwardSolver::getState(double time) {
 
     return state;
 }
+
+Vector AbstractForwardSolver::getInitializer() const {
+    return system.getInitializer();
+}

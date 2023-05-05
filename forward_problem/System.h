@@ -6,12 +6,15 @@ class System {
 public:
     System(double omega, double dissipationCoefficient, double initialAngle, double initialAngularSpeed);
 
+    explicit System(const Vector& vector);
+
     void f(Vector &state) const;
 
     Vector getInitialState() const;
 
+    Vector getInitializer() const;
 private:
-    double omegaSquared;
+    double omega;
     double dissipationCoefficient;
     Vector initialState;
 };

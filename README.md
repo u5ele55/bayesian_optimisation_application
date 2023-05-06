@@ -2,12 +2,12 @@
 Bayesian optimization used to solve the inverse problem of a dissipative pendulum
 
 ## About
-This repository contains implementation of the Bayesian Optimisation and Gaussian Processes which used to optimize parameters of dynamic system of dissipative pendulum. <br>
+This repository contains implementation of the Bayesian Optimisation and Gaussian Processes which are used to optimize parameters of dynamic system of dissipative pendulum. <br>
 Program could be built with CMake (min. 3.24 version required) <br>
 
 ## Some results
-All graphics were plotted with Python using matplotlib. <br>
-Black dots here are measurements with applied normal-distributed noise. curves with opacity are results of iterations of Bayesian Optimisation. 
+All plots were made with Python using matplotlib. <br>
+Black dots here are measurements with applied normal-distributed noise. Curves with opacity are results of iterations of Bayesian Optimisation. 
 Blue and orange curves are measurements from original and optimized systems. <br>
 
 1. All parameters occur in discrete space in which search is performed

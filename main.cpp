@@ -32,7 +32,6 @@ int main() {
     space.addBoundary(initialAngularSpeed);
 
     PendulumMSE mse(solver);
-
     std::ofstream output;
     output.open("../output.txt");
 
@@ -45,7 +44,6 @@ int main() {
 
     const int iterationsCount = 30;
     output << iterationsCount << "\n";
-
     std::vector<Vector> priorX = {
             {omega.min, dissipationCoef.min, initialAngle.min, initialAngularSpeed.max},
             {omega.min, dissipationCoef.min, initialAngle.max, initialAngularSpeed.min},
@@ -58,7 +56,6 @@ int main() {
     }
     auto *kernel = new SquaredExponentialKernel(3);
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
-
     BayesianOptimizer bo(mse, gp);
     for (int i = 0; i < iterationsCount; i++) {
         std::cout << "Step " << i << " started\n";

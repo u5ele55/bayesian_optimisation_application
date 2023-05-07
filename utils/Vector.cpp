@@ -15,7 +15,25 @@ Vector::Vector(std::initializer_list<double> list)
 Vector::Vector(std::vector<double> l)
         : Matrix(l.size(), 1) {
     for (int i = 0; i < l.size(); i++) {
-        data[i][0] = l[i];
+        at(i, 0) = l[i];
+    }
+}
+
+Vector::Vector(const Vector &other) 
+        : Matrix(other.n, 1) {
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            at(i, j) = other.at(i, j);
+        }
+    }
+}
+
+Vector::Vector(Vector &&other) 
+        : Matrix(other.n, 1) {
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            at(i, j) = other.at(i, j);
+        }
     }
 }
 
@@ -26,7 +44,7 @@ Vector::Vector(const Matrix &matrix, int column)
     }
 
     for (int i = 0; i < matrix.getShape().first; i++) {
-        data[i][0] = matrix.at(i, column);
+        at(i, 0) = matrix.at(i, column);
     }
 }
 
@@ -53,7 +71,7 @@ Vector Vector::operator-(const Vector &other) const {
 Vector Vector::operator*(double val) const {
     Vector res(n);
     for (int i = 0; i < n; i++) {
-        res[i] = data[i][0] * val;
+        res[i] = at(i, 0) * val;
     }
     return res;
 }
@@ -66,7 +84,7 @@ Vector Vector::operator+(const Vector &other) const {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < other.m; j++) {
-            result.at(i, j) = data[i][j] + other.data[i][j];
+            result.at(i, j) = at(i,j) + other.at(i,j);
         }
     }
 
@@ -78,7 +96,7 @@ Vector Vector::operator-() const {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            result.at(i, j) = -data[i][j];
+            result.at(i, j) = -at(i,j);
         }
     }
 
@@ -92,7 +110,7 @@ Vector &Vector::operator+=(const Vector &other) {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            data[i][j] += other.data[i][j];
+            at(i,j) += other.at(i,j);
         }
     }
 
@@ -103,14 +121,26 @@ Vector &Vector::operator=(const Vector &other) {
     resize(other.n, other.m);
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {
-            data[i][j] = other.data[i][j];
+            at(i,j) = other.at(i,j);
         }
     }
     return *this;
 }
 
+Vector &Vector::operator=(Vector &&other)
+{
+    resize(other.n, other.m);
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            at(i,j) = other.at(i,j);
+        }
+    }
+    return *this;
+}
+#include <iostream>
 bool Vector::operator==(const Vector &other) const
 {
+    // std::cout << "! Equality check..\n"; 
     if (other.getShape().first != n) {
         return false;
     }

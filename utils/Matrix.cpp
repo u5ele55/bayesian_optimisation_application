@@ -2,22 +2,51 @@
 #include <iostream>
 
 Matrix::Matrix(int n, int m) : n(n), m(m) {
-    this->data = std::vector<std::vector<double>>(n, std::vector<double>(m, 0));
+    this->data = new double[n * m];
+}
+
+Matrix::Matrix(const Matrix &other) : n(other.n), m(other.m) {
+    this->data = new double[n * m];
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            at(i, j) = other.at(i, j);
+        }
+    }
+}
+
+Matrix::Matrix(Matrix &&other) : n(other.n), m(other.m) {
+    this->data = new double[n * m];
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            at(i, j) = other.at(i, j);
+        }
+    }
+}
+
+Matrix::~Matrix() {
+    delete [] data;
 }
 
 double &Matrix::at(int y, int x) {
-    return this->data[y][x];
+    return this->data[y*m + x];
 }
 
 double Matrix::at(int y, int x) const {
-    return this->data[y][x];
+    return this->data[y*m + x];
 }
 
 void Matrix::resize(int n, int m) {
-    data.resize(n);
-    for (int i = 0; i < n; i++) {
-        data[i].resize(m);
+    // TODO: optimize later
+    double * newData = new double[n * m];
+    for(int i = 0; i < this->n; i ++) {
+        for(int j = 0; j < this->m; j ++) {
+            newData[i * m + j] = at(i,j);
+        }
     }
+    
+    delete [] data;
+    data = newData;
+
     this->n = n;
     this->m = m;
 }
@@ -30,7 +59,7 @@ void Matrix::emplaceColumn(const Matrix &column, int index) {
         throw std::invalid_argument("Matrix::emplaceColumn: column must be a vector!");
     }
     for (int i = 0; i < n; i++) {
-        data[i][index] = column.at(i, 0);
+        at(i, index) = column.at(i, 0);
     }
 }
 
@@ -42,7 +71,7 @@ Matrix Matrix::operator*(const double val) const {
     Matrix other = Matrix(n, m);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            other.data[i][j] = data[i][j] * val;
+            other.at(i, j) = at(i, j) * val;
         }
     }
     return other;
@@ -57,7 +86,7 @@ Matrix Matrix::operator*(const Matrix &other) const {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < other.m; j++) {
             for (int k = 0; k < m; k++) {
-                result.at(i, j) += data[i][k] * other.data[k][j];
+                result.at(i, j) += at(i, k) * other.at(k, j);
             }
         }
     }
@@ -73,7 +102,7 @@ Matrix Matrix::operator+(const Matrix &other) const {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < other.m; j++) {
-            result.at(i, j) = data[i][j] + other.data[i][j];
+            result.at(i, j) = at(i, j) + other.at(i, j);
         }
     }
 
@@ -85,7 +114,7 @@ Matrix Matrix::operator-() const {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            result.at(i, j) = -data[i][j];
+            result.at(i, j) = -at(i, j);
         }
     }
 
@@ -103,7 +132,7 @@ Matrix &Matrix::operator+=(const Matrix &other) {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            data[i][j] += other.data[i][j];
+            at(i, j) += other.at(i, j);
         }
     }
 
@@ -114,9 +143,24 @@ Matrix &Matrix::operator=(const Matrix &other) {
     resize(other.n, other.m);
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {
-            data[i][j] = other.data[i][j];
+            at(i, j) = other.at(i, j);
         }
     }
+    n = other.n;
+    m = other.m;
+    return *this;
+}
+
+Matrix &Matrix::operator=(Matrix &&other)
+{
+    resize(other.n, other.m);
+    for (int i = 0; i < other.n; i++) {
+        for (int j = 0; j < other.m; j++) {
+            at(i, j) = other.at(i, j);
+        }
+    }
+    n = other.n;
+    m = other.m;
     return *this;
 }
 
@@ -125,7 +169,7 @@ Matrix Matrix::transpose() const {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            result.data[j][i] = data[i][j];
+            result.at(j, i) = at(i, j);
         }
     }
 
@@ -137,7 +181,7 @@ std::ostream &operator<<(std::ostream &stream, const Matrix &matrix) {
     for (int i = 0; i < matrix.n; i++) {
         stream << " [";
         for (int j = 0; j < matrix.m; j++) {
-            stream << matrix.data[i][j] << ((j == matrix.m - 1) ? "" : " ");
+            stream << matrix.at(i, j) << ((j == matrix.m - 1) ? "" : " ");
         }
         stream << "]\n";
     }

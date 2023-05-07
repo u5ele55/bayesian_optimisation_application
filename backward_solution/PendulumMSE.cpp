@@ -22,7 +22,6 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
             double derivative = (value - trueValues[pointsQuantity-1]) / step;
             if (fabs(derivative) < EPS) {
                 std::cout << "Reached " << i * step << " time, breaking here \n";
-                std::cout << value << " " << derivative << '\n';
                 break;
             }
         }

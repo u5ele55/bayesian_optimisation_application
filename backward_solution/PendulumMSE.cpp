@@ -22,7 +22,6 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
             double derivative = (value - trueValues[pointsQuantity-1]) / step;
             if (fabs(derivative) < EPS) {
                 std::cout << "Reached " << i * step << " time, breaking here \n";
-                std::cout << value << " " << derivative << '\n';
                 break;
             }
         }
@@ -30,7 +29,6 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
         trueValues.push_back(value);
     }
     std::cout << "Result pointQuantity in MSE: " << pointsQuantity << '\n';
-    // SolutionCache::getInstance().add(solver.getInitializer(), step, trueValues);
 }
 
 double PendulumMSE::operator()(const Vector &v, bool cache) const {

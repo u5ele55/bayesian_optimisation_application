@@ -61,3 +61,8 @@ Vector LinearSpace::at(size_t i) {
 size_t LinearSpace::dimensions() {
     return dims + 1;
 }
+
+Dimension LinearSpace::getDimension(int i) const
+{
+    return space[i];
+}

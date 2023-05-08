@@ -10,6 +10,9 @@ public:
 
     Vector(std::vector<double> l);
 
+    Vector(const Vector &other);
+    Vector(Vector &&other);
+
     Vector(const Matrix &matrix, int column);
 
     double &operator[](int n);
@@ -29,6 +32,8 @@ public:
     Vector &operator+=(const Vector &other);
 
     Vector &operator=(const Vector &other);
+
+    Vector &operator=(Vector &&other);
 
     bool operator==(const Vector &other) const;
 

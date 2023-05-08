@@ -8,6 +8,12 @@ class Matrix {
 public:
     explicit Matrix(int n, int m);
 
+    Matrix(const Matrix &other);
+
+    Matrix(Matrix &&other);
+
+    ~Matrix();
+
     double &at(int y, int x);
 
     double at(int y, int x) const;
@@ -37,12 +43,15 @@ public:
 
     Matrix &operator=(const Matrix &other);
 
-    friend std::ostream &operator<<(std::ostream &stream, const Matrix &matrix);
+    Matrix &operator=(Matrix &&other);
 
+    friend std::ostream &operator<<(std::ostream &stream, const Matrix &matrix);
 protected:
-    std::vector<std::vector<double>> data;
+    double * data;
     int n;
+    int allocatedN;
     int m;
+    int allocatedM;
 };
 
 std::ostream &operator<<(std::ostream &stream, const Matrix &matrix);

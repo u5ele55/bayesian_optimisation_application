@@ -7,18 +7,12 @@
 #include "forward_problem/RK4SolverWithNoise.h"
 #include "backward_solution/OptimizerEpoch.h"
 #include "utils/SolutionCache.h"
+#include "utils/logs/FileLogger.h"
 
 const int EPOCH_QUANTITY = 3;
 
-void printSystem(std::ofstream &output, const std::vector<double>& values) {
-    output << values.size() << "\n";
-    for (auto it : values) {
-        output << it << "\n";
-    }
-}
-
 int main() {
-    System initial{0.95, sqrt(2) / 2, M_PI_2, 0.41};
+    System initial{0.93, sqrt(2) / 2, M_PI_2, 0.41};
     double stddev = 0.05;
     RK4SolverWithNoise solver(initial, stddev);
 
@@ -33,15 +27,14 @@ int main() {
     space.addBoundary(initialAngularSpeed);
 
     PendulumMSE mse(solver);
-    std::ofstream output;
-    output.open("../output.txt");
-
+    ILogger * output = new FileLogger("../test.txt");
+    
     double mseStep = mse.getStep();
-    output << mseStep << "\n";
-    printSystem(output, mse.getTrueValues()); // print data with noise
+    output->stream() << mseStep << "\n";
+    printSystem(output->stream(), mse.getTrueValues()); // print data with noise
     mse(initial.getInitializer()); // solve system without noise
     auto initialValues = SolutionCache::getInstance().get(initial.getInitializer());
-    printSystem(output, initialValues); // print data without noise
+    printSystem(output->stream(), initialValues); // print data without noise
 
     std::vector<Vector> priorX = {
             {omega.min, dissipationCoef.min, initialAngle.min, initialAngularSpeed.max},
@@ -57,10 +50,9 @@ int main() {
 
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
     BayesianOptimizer * bo = new BayesianOptimizer(mse, gp);
-    OptimizerEpoch * epoch = new OptimizerEpoch(*bo);
+    OptimizerEpoch * epoch = new OptimizerEpoch(*bo, output);
     auto epochMin = epoch->iterate();
     std::cout << "Epoch 0 best: " << epochMin << '\n';
-
     for(int i = 1; i < EPOCH_QUANTITY; i ++) {
         // rebuild space
         LinearSpace newSpace;
@@ -96,7 +88,7 @@ int main() {
 
         // create epoch for new bo and iterate
         delete epoch;
-        epoch = new OptimizerEpoch(*bo);
+        epoch = new OptimizerEpoch(*bo, output);
 
         epochMin = epoch->iterate();
         std::cout << "Epoch " << i << " best: " << epochMin << '\n';
@@ -104,14 +96,14 @@ int main() {
 
     
     auto argmin = bo->getArgmin();
-    printSystem(output, SolutionCache::getInstance().get(argmin));
+    printSystem(output->stream(), SolutionCache::getInstance().get(argmin));
     std::cout << "Result point: \n" << argmin << '\n';
     std::cout << "Result MSE: " << mse(bo->getArgmin()) << '\n';
 
     delete kernel;
     delete bo;
     delete epoch;
-    output.close();
+    delete output;
 
     return 0;
 }

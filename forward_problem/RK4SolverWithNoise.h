@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include "RK4Solver.h"
 
 class RK4SolverWithNoise : public RK4ForwardSolver {
@@ -8,4 +9,7 @@ public:
     Vector getState(double time);
 private:
     double stddev;
+    std::random_device rd; 
+    std::mt19937 gen; 
+    std::normal_distribution<double> normalDistr; 
 };

@@ -1,8 +1,10 @@
 #include <iostream>
 #include "OptimizerEpoch.h"
+#include "../utils/SolutionCache.h"
 
-OptimizerEpoch::OptimizerEpoch(BayesianOptimizer &bo)
-        : bo(bo) {
+OptimizerEpoch::OptimizerEpoch(BayesianOptimizer &bo, ILogger * logger)
+        : bo(bo), 
+        logger(logger) {
 }
 
 Vector OptimizerEpoch::iterate()
@@ -20,7 +22,7 @@ Vector OptimizerEpoch::iterate()
             countdown = expectedImprovementIterations;
             epochMinimum = bo.getArgmin();
         }
-        //printSystem(output, SolutionCache::getInstance().get(prediction));
+        printSystem(logger->stream(), SolutionCache::getInstance().get(prediction));
     }
     std::cout << "Minimum for epoch: " << epochMinimum << '\n';
     return epochMinimum;

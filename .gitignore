@@ -2,6 +2,7 @@
 .vscode
 .idea
 cmake-build-debug
+output.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

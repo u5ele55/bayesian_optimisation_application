@@ -17,9 +17,9 @@ int main() {
     RK4SolverWithNoise solver(initial, stddev);
 
     Dimension omega = {0.2, 1, 0.1},
-        dissipationCoef = {0.2, 0.9, 0.1},
-        initialAngle = {M_PI_4, M_PI_2, M_PI_4 / 4},
-        initialAngularSpeed = {0, 1, 0.1};
+            dissipationCoef = {0.2, 0.9, 0.1},
+            initialAngle = {M_PI_4, M_PI_2, M_PI_4 / 4},
+            initialAngularSpeed = {0, 1, 0.1};
     LinearSpace space{};
     space.addBoundary(omega);
     space.addBoundary(dissipationCoef);
@@ -27,14 +27,14 @@ int main() {
     space.addBoundary(initialAngularSpeed);
 
     PendulumMSE mse(solver);
-    ILogger * output = new FileLogger("../test.txt");
-    
+    AbstractLogger *output = new FileLogger("../test.txt");
+
     double mseStep = mse.getStep();
     output->stream() << mseStep << "\n";
-    printSystem(output->stream(), mse.getTrueValues()); // print data with noise
+    output->printSystem(mse.getTrueValues()); // print data with noise
     mse(initial.getInitializer()); // solve system without noise
     auto initialValues = SolutionCache::getInstance().get(initial.getInitializer());
-    printSystem(output->stream(), initialValues); // print data without noise
+    output->printSystem(initialValues); // print data without noise
 
     std::vector<Vector> priorX = {
             {omega.min, dissipationCoef.min, initialAngle.min, initialAngularSpeed.max},
@@ -49,27 +49,27 @@ int main() {
     auto *kernel = new SquaredExponentialKernel(3);
 
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
-    BayesianOptimizer * bo = new BayesianOptimizer(mse, gp);
-    OptimizerEpoch * epoch = new OptimizerEpoch(*bo, output);
+    auto *bo = new BayesianOptimizer(mse, gp);
+    auto *epoch = new OptimizerEpoch(*bo, output);
     auto epochMin = epoch->iterate();
     std::cout << "Epoch 0 best: " << epochMin << '\n';
-    for(int i = 1; i < EPOCH_QUANTITY; i ++) {
+    for (int i = 1; i < EPOCH_QUANTITY; i++) {
         // rebuild space
         LinearSpace newSpace;
-        for(int j = 0; j < epochMin.getShape().first; j ++) {
+        for (int j = 0; j < epochMin.getShape().first; j++) {
             auto oldDim = space.getDimension(j);
-            double oldDimStep = oldDim.step;
-            double newStep = 2 * oldDimStep / ceil( (oldDim.max - oldDim.min) / oldDimStep );
-            newSpace.addBoundary({epochMin[j] - oldDimStep, epochMin[j] + oldDimStep, newStep});
+            double oldStep = oldDim.step;
+            double newStep = 2 * oldStep / ceil((oldDim.max - oldDim.min) / oldStep);
+            newSpace.addBoundary({epochMin[j] - oldStep, epochMin[j] + oldStep, newStep});
         }
         space = newSpace;
         auto checkedPreviously = bo->getChecked();
         // filter checked points that belong to new space
         std::vector<Vector> newPriorX;
         std::vector<double> newPriorY;
-        for (const auto &v : checkedPreviously) {
+        for (const auto &v: checkedPreviously) {
             bool inSpace = true;
-            for(int i = 0; i < v.getShape().first; i ++) {
+            for (int i = 0; i < v.getShape().first; i++) {
                 if (space.getDimension(i).min > v[i] || v[i] > space.getDimension(i).max) {
                     inSpace = false;
                 }
@@ -79,7 +79,7 @@ int main() {
                 newPriorY.push_back(mse(v));
             }
         }
-        
+
         // treat them as priorX and priorY
         // create gp and bo on it
         GaussianProcesses newGp(newPriorX, newPriorY, space, kernel, stddev);
@@ -94,9 +94,9 @@ int main() {
         std::cout << "Epoch " << i << " best: " << epochMin << '\n';
     }
 
-    
+
     auto argmin = bo->getArgmin();
-    printSystem(output->stream(), SolutionCache::getInstance().get(argmin));
+    output->printSystem(SolutionCache::getInstance().get(argmin));
     std::cout << "Result point: \n" << argmin << '\n';
     std::cout << "Result MSE: " << mse(bo->getArgmin()) << '\n';
 

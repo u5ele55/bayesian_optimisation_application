@@ -59,7 +59,6 @@ bool BayesianOptimizer::vectorChecked(const Vector &vec) const
 {
     for (const auto &v : checkedDots) {
         if (v == vec) {
-            // std::cout << vec << " is similar to " << v << '\n'; // 
             return true;
         }
     }

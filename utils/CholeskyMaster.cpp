@@ -1,6 +1,6 @@
 #include "CholeskyMaster.h"
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A) {
     if (A.getShape().first != A.getShape().second) {
@@ -8,8 +8,6 @@ Matrix CholeskyMaster::choleskyDecomposition(const Matrix &A) {
     }
     int n = A.getShape().first;
     auto ans = Matrix(n, n);
-    // std::cout << "matrix = " << A << "\n";
-    // exit(0);
     for (int i = 0; i < n; i++) {
         for (int k = 0; k < i + 1; k++) {
             double sum = 0;

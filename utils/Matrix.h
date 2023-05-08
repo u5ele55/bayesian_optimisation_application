@@ -7,7 +7,9 @@
 class Matrix {
 public:
     explicit Matrix(int n, int m);
+
     Matrix(const Matrix &other);
+
     Matrix(Matrix &&other);
 
     ~Matrix();
@@ -47,7 +49,9 @@ public:
 protected:
     double * data;
     int n;
+    int allocatedN;
     int m;
+    int allocatedM;
 };
 
 std::ostream &operator<<(std::ostream &stream, const Matrix &matrix);

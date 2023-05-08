@@ -29,7 +29,6 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
         trueValues.push_back(value);
     }
     std::cout << "Result pointQuantity in MSE: " << pointsQuantity << '\n';
-    // SolutionCache::getInstance().add(solver.getInitializer(), step, trueValues);
 }
 
 double PendulumMSE::operator()(const Vector &v, bool cache) const {

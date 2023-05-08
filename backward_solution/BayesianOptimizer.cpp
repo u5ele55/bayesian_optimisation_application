@@ -87,3 +87,8 @@ Vector BayesianOptimizer::step() {
 Vector BayesianOptimizer::getArgmin() {
     return argmin;
 }
+
+std::vector<Vector> BayesianOptimizer::getChecked() const
+{
+    return checkedDots;
+}

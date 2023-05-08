@@ -36,6 +36,8 @@ public:
 
     size_t dimensions();
 
+    Dimension getDimension(int i) const;
+
 protected:
     std::vector<Dimension> space;
     Vector position;

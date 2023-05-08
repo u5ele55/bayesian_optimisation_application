@@ -10,6 +10,8 @@ include_directories(utils)
 add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
+        backward_solution/OptimizerEpoch.cpp
+        backward_solution/OptimizerEpoch.h
         backward_solution/kernel/IKernel.h
         utils/LinearSpace.cpp
         utils/LinearSpace.h

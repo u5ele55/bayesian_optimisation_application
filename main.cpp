@@ -5,7 +5,10 @@
 #include "backward_solution/BayesianOptimizer.h"
 #include "backward_solution/kernel/SquaredExponentialKernel.h"
 #include "forward_problem/RK4SolverWithNoise.h"
+#include "backward_solution/OptimizerEpoch.h"
 #include "utils/SolutionCache.h"
+
+const int EPOCH_QUANTITY = 3;
 
 void printSystem(std::ofstream &output, const std::vector<double>& values) {
     output << values.size() << "\n";
@@ -40,8 +43,6 @@ int main() {
     auto initialValues = SolutionCache::getInstance().get(initial.getInitializer());
     printSystem(output, initialValues); // print data without noise
 
-    const int iterationsCount = 30;
-    output << iterationsCount << "\n";
     std::vector<Vector> priorX = {
             {omega.min, dissipationCoef.min, initialAngle.min, initialAngularSpeed.max},
             {omega.min, dissipationCoef.min, initialAngle.max, initialAngularSpeed.min},
@@ -53,14 +54,38 @@ int main() {
         priorY[i] = mse(priorX[i]);
     }
     auto *kernel = new SquaredExponentialKernel(3);
+
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
     BayesianOptimizer bo(mse, gp);
-    for (int i = 0; i < iterationsCount; i++) {
-        std::cout << "Step " << i << " started\n";
-        auto prediction = bo.step();
-        std::cout << i << ": " << prediction << std::endl;
-        printSystem(output, SolutionCache::getInstance().get(prediction));
+    OptimizerEpoch epoch(bo);
+    auto epochMin = epoch.iterate();
+
+    for(int i = 0; i < EPOCH_QUANTITY - 1; i ++) {
+        // rebuild space
+        LinearSpace newSpace;
+        for(int j = 0; j < epochMin.getShape().first; j ++) {
+            auto oldDim = space.getDimension(j);
+            double oldDimStep = oldDim.step;
+            double newStep = 2 * oldDimStep / ceil( (oldDim.max - oldDim.min) / oldDimStep );
+            newSpace.addBoundary({epochMin[j] - oldDimStep, epochMin[j] + oldDimStep, newStep});
+        }
+        space = newSpace;
+        auto checkedPreviously = bo.getChecked();
+        // filter checked points that belong to new space
+        // ... 
+        
+        // treat them as priorX and priorY
+        // ...
+
+        // create gp and bo on it
+        // ...
+
+        // create epoch for new bo and iterate
+        // ...
+        
     }
+
+    
     auto argmin = bo.getArgmin();
     printSystem(output, SolutionCache::getInstance().get(argmin));
     std::cout << "Result point: \n" << argmin << '\n';

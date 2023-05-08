@@ -16,6 +16,8 @@ public:
 
     Vector getArgmin();
 
+    std::vector<Vector> getChecked() const;
+
 private:
     /**
      * Sample of acquisition function

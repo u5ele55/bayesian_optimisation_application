@@ -1,11 +1,21 @@
 #include "Matrix.h"
 #include <iostream>
 
-Matrix::Matrix(int n, int m) : n(n), m(m) {
+Matrix::Matrix(int n, int m)
+        : n(n),
+          m(m) {
     this->data = new double[n * m];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            at(i, j) = 0;
+        }
+    }
+
 }
 
-Matrix::Matrix(const Matrix &other) : n(other.n), m(other.m) {
+Matrix::Matrix(const Matrix &other)
+        : n(other.n),
+          m(other.m) {
     this->data = new double[n * m];
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {
@@ -14,7 +24,9 @@ Matrix::Matrix(const Matrix &other) : n(other.n), m(other.m) {
     }
 }
 
-Matrix::Matrix(Matrix &&other) : n(other.n), m(other.m) {
+Matrix::Matrix(Matrix &&other)
+        : n(other.n),
+          m(other.m) {
     this->data = new double[n * m];
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {
@@ -24,27 +36,27 @@ Matrix::Matrix(Matrix &&other) : n(other.n), m(other.m) {
 }
 
 Matrix::~Matrix() {
-    delete [] data;
+    delete[] data;
 }
 
 double &Matrix::at(int y, int x) {
-    return this->data[y*m + x];
+    return this->data[y * m + x];
 }
 
 double Matrix::at(int y, int x) const {
-    return this->data[y*m + x];
+    return this->data[y * m + x];
 }
 
 void Matrix::resize(int n, int m) {
     // TODO: optimize later
-    double * newData = new double[n * m];
-    for(int i = 0; i < this->n; i ++) {
-        for(int j = 0; j < this->m; j ++) {
-            newData[i * m + j] = at(i,j);
+    auto *newData = new double[n * m];
+    for (int i = 0; i < this->n; i++) {
+        for (int j = 0; j < this->m; j++) {
+            newData[i * m + j] = at(i, j);
         }
     }
-    
-    delete [] data;
+
+    delete[] data;
     data = newData;
 
     this->n = n;
@@ -151,8 +163,7 @@ Matrix &Matrix::operator=(const Matrix &other) {
     return *this;
 }
 
-Matrix &Matrix::operator=(Matrix &&other)
-{
+Matrix &Matrix::operator=(Matrix &&other) {
     resize(other.n, other.m);
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {

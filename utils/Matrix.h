@@ -7,7 +7,9 @@
 class Matrix {
 public:
     explicit Matrix(int n, int m);
+
     Matrix(const Matrix &other);
+
     Matrix(Matrix &&other);
 
     ~Matrix();

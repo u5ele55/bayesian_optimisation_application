@@ -8,8 +8,6 @@
 #include "utils/SolutionCache.h"
 
 void printSystem(std::ofstream &output, const std::vector<double>& values) {
-    // output << state[0] << " " << state[1] << " " << state[2] << " " << state[3] << "\n";
-    // auto solution = SolutionCache::getInstance().get(state);
     output << values.size() << "\n";
     for (auto it : values) {
         output << it << "\n";

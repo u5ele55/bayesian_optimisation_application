@@ -137,10 +137,9 @@ Vector &Vector::operator=(Vector &&other)
     }
     return *this;
 }
-#include <iostream>
+
 bool Vector::operator==(const Vector &other) const
 {
-    // std::cout << "! Equality check..\n"; 
     if (other.getShape().first != n) {
         return false;
     }

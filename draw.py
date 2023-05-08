@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-import gi
-gi.require_version("Gtk", "3.0")
+# import gi
+# gi.require_version("Gtk", "3.0")
 
 
 def plot_system(file, step, alpha=1.0, label='', plot_type="plot", color=''):

@@ -18,7 +18,7 @@ void printSystem(std::ofstream &output, const std::vector<double>& values) {
 }
 
 int main() {
-    System initial{0.9, 0.4, M_PI_2, 0.4};
+    System initial{0.95, sqrt(2) / 2, M_PI_2, 0.41};
     double stddev = 0.05;
     RK4SolverWithNoise solver(initial, stddev);
 
@@ -56,11 +56,12 @@ int main() {
     auto *kernel = new SquaredExponentialKernel(3);
 
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
-    BayesianOptimizer bo(mse, gp);
-    OptimizerEpoch epoch(bo);
-    auto epochMin = epoch.iterate();
+    BayesianOptimizer * bo = new BayesianOptimizer(mse, gp);
+    OptimizerEpoch * epoch = new OptimizerEpoch(*bo);
+    auto epochMin = epoch->iterate();
+    std::cout << "Epoch 0 best: " << epochMin << '\n';
 
-    for(int i = 0; i < EPOCH_QUANTITY - 1; i ++) {
+    for(int i = 1; i < EPOCH_QUANTITY; i ++) {
         // rebuild space
         LinearSpace newSpace;
         for(int j = 0; j < epochMin.getShape().first; j ++) {
@@ -70,28 +71,47 @@ int main() {
             newSpace.addBoundary({epochMin[j] - oldDimStep, epochMin[j] + oldDimStep, newStep});
         }
         space = newSpace;
-        auto checkedPreviously = bo.getChecked();
+        auto checkedPreviously = bo->getChecked();
         // filter checked points that belong to new space
-        // ... 
+        std::vector<Vector> newPriorX;
+        std::vector<double> newPriorY;
+        for (const auto &v : checkedPreviously) {
+            bool inSpace = true;
+            for(int i = 0; i < v.getShape().first; i ++) {
+                if (space.getDimension(i).min > v[i] || v[i] > space.getDimension(i).max) {
+                    inSpace = false;
+                }
+            }
+            if (inSpace) {
+                newPriorX.push_back(v);
+                newPriorY.push_back(mse(v));
+            }
+        }
         
         // treat them as priorX and priorY
-        // ...
-
         // create gp and bo on it
-        // ...
+        GaussianProcesses newGp(newPriorX, newPriorY, space, kernel, stddev);
+        delete bo;
+        bo = new BayesianOptimizer(mse, newGp);
 
         // create epoch for new bo and iterate
-        // ...
-        
+        delete epoch;
+        epoch = new OptimizerEpoch(*bo);
+
+        epochMin = epoch->iterate();
+        std::cout << "Epoch " << i << " best: " << epochMin << '\n';
     }
 
     
-    auto argmin = bo.getArgmin();
+    auto argmin = bo->getArgmin();
     printSystem(output, SolutionCache::getInstance().get(argmin));
     std::cout << "Result point: \n" << argmin << '\n';
-    std::cout << "Result MSE: " << mse(bo.getArgmin()) << '\n';
+    std::cout << "Result MSE: " << mse(bo->getArgmin()) << '\n';
 
     delete kernel;
+    delete bo;
+    delete epoch;
     output.close();
+
     return 0;
 }

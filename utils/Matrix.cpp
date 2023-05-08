@@ -3,7 +3,9 @@
 
 Matrix::Matrix(int n, int m)
         : n(n),
-          m(m) {
+          allocatedN(n),
+          m(m),
+          allocatedM(m) {
     this->data = new double[n * m];
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
@@ -15,7 +17,9 @@ Matrix::Matrix(int n, int m)
 
 Matrix::Matrix(const Matrix &other)
         : n(other.n),
-          m(other.m) {
+          allocatedN(other.n),
+          m(other.m),
+          allocatedM(other.m) {
     this->data = new double[n * m];
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {
@@ -26,7 +30,9 @@ Matrix::Matrix(const Matrix &other)
 
 Matrix::Matrix(Matrix &&other)
         : n(other.n),
-          m(other.m) {
+          allocatedN(other.n),
+          m(other.m),
+          allocatedM(other.m) {
     this->data = new double[n * m];
     for (int i = 0; i < other.n; i++) {
         for (int j = 0; j < other.m; j++) {
@@ -40,19 +46,31 @@ Matrix::~Matrix() {
 }
 
 double &Matrix::at(int y, int x) {
-    return this->data[y * m + x];
+    return this->data[y * allocatedM + x];
 }
 
 double Matrix::at(int y, int x) const {
-    return this->data[y * m + x];
+    return this->data[y * allocatedM + x];
 }
 
 void Matrix::resize(int n, int m) {
-    // TODO: optimize later
-    auto *newData = new double[n * m];
+    if (n <= allocatedN && m <= allocatedM) {
+        this->n = n;
+        this->m = m;
+        return;
+    }
+    int localAllocN = allocatedN;
+    int localAllocM = allocatedM;
+    if (n > localAllocN) {
+        localAllocN = n + 10;
+    }
+    if (m > localAllocM) {
+        localAllocM = m + 10;
+    }
+    auto *newData = new double[localAllocN * localAllocM];
     for (int i = 0; i < this->n; i++) {
         for (int j = 0; j < this->m; j++) {
-            newData[i * m + j] = at(i, j);
+            newData[i * localAllocM + j] = at(i, j);
         }
     }
 
@@ -61,6 +79,8 @@ void Matrix::resize(int n, int m) {
 
     this->n = n;
     this->m = m;
+    allocatedN = localAllocN;
+    allocatedM = localAllocM;
 }
 
 void Matrix::emplaceColumn(const Matrix &column, int index) {

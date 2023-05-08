@@ -8,7 +8,7 @@ OptimizerEpoch::OptimizerEpoch(BayesianOptimizer &bo, AbstractLogger *logger)
 }
 
 Vector OptimizerEpoch::iterate() {
-    const int expectedImprovementIterations = 7; // expected iteration quantity for improvement
+    const int expectedImprovementIterations = 10; // expected iteration quantity for improvement
     int countdown = expectedImprovementIterations;
     int i = 0;
     auto epochMinimum = bo.getArgmin();

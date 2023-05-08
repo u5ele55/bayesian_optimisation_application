@@ -12,14 +12,14 @@
 const int EPOCH_QUANTITY = 3;
 
 int main() {
-    System initial{0.93, sqrt(2) / 2, M_PI_2, 0.41};
+    System initial{M_SQRT2, 0.55555555555555555555, -M_PI_2, M_SQRT1_2};
     double stddev = 0.05;
     RK4SolverWithNoise solver(initial, stddev);
 
-    Dimension omega = {0.2, 1, 0.1},
-            dissipationCoef = {0.2, 0.9, 0.1},
-            initialAngle = {M_PI_4, M_PI_2, M_PI_4 / 4},
-            initialAngularSpeed = {0, 1, 0.1};
+    Dimension omega = {0.1, 2, 0.2},
+            dissipationCoef = {0.1, 1.5, 0.2},
+            initialAngle = {-M_PI_2, M_PI_2, M_PI_4},
+            initialAngularSpeed = {0, 2, 0.2};
     LinearSpace space{};
     space.addBoundary(omega);
     space.addBoundary(dissipationCoef);
@@ -46,12 +46,15 @@ int main() {
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = mse(priorX[i]);
     }
-    auto *kernel = new SquaredExponentialKernel(3);
+    auto *kernel = new SquaredExponentialKernel(stddev, 0.5);
 
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
     auto *bo = new BayesianOptimizer(mse, gp);
     auto *epoch = new OptimizerEpoch(*bo, output);
     auto epochMin = epoch->iterate();
+    auto minBoundary = Vector({omega.min, dissipationCoef.min, initialAngle.min, initialAngularSpeed.min});
+    auto maxBoundary = Vector({omega.max, dissipationCoef.max, initialAngle.max, initialAngularSpeed.max});
+
     std::cout << "Epoch 0 best: " << epochMin << '\n';
     for (int i = 1; i < EPOCH_QUANTITY; i++) {
         // rebuild space
@@ -60,7 +63,9 @@ int main() {
             auto oldDim = space.getDimension(j);
             double oldStep = oldDim.step;
             double newStep = 2 * oldStep / ceil((oldDim.max - oldDim.min) / oldStep);
-            newSpace.addBoundary({epochMin[j] - oldStep, epochMin[j] + oldStep, newStep});
+            double newMin = fmax(epochMin[j] - oldStep * 1.5, minBoundary[j]);
+            double newMax = fmin(epochMin[j] + oldStep * 1.5, maxBoundary[j]);
+            newSpace.addBoundary({newMin, newMax, newStep});
         }
         space = newSpace;
         auto checkedPreviously = bo->getChecked();

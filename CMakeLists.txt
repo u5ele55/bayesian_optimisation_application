@@ -35,4 +35,4 @@ add_executable(bayesian_optimisation_application
         utils/logs/AbstractLogger.cpp
         utils/logs/FileLogger.h
         utils/logs/FileLogger.cpp
-        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/PendulumMSE.cpp backward_solution/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h)
+        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/PendulumMSE.cpp backward_solution/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h)

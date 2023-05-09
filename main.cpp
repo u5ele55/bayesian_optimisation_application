@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cmath>
-#include <fstream>
 
 #include "backward_solution/BayesianOptimizer.h"
 #include "backward_solution/kernel/SquaredExponentialKernel.h"
+#include "backward_solution/kernel/Matern52Kernel.h"
 #include "forward_problem/RK4SolverWithNoise.h"
 #include "backward_solution/OptimizerEpoch.h"
 #include "utils/SolutionCache.h"
@@ -12,14 +12,14 @@
 const int EPOCH_QUANTITY = 3;
 
 int main() {
-    System initial{M_SQRT2, 0.55555555555555555555, -M_PI_2, M_SQRT1_2};
-    double stddev = 0.05;
+    System initial{0.54321, 0.777, M_PI_4, 0.56789};
+    double stddev = 0.03;
     RK4SolverWithNoise solver(initial, stddev);
 
-    Dimension omega = {0.1, 2, 0.2},
-            dissipationCoef = {0.1, 1.5, 0.2},
-            initialAngle = {-M_PI_2, M_PI_2, M_PI_4},
-            initialAngularSpeed = {0, 2, 0.2};
+    Dimension omega = {0.5, 1.5, 0.2},
+        dissipationCoef = {0.1, 1, 0.1},
+        initialAngle = {0, M_PI_2, M_PI_4/2},
+        initialAngularSpeed = {0, 1.5, 0.2};
     LinearSpace space{};
     space.addBoundary(omega);
     space.addBoundary(dissipationCoef);
@@ -63,8 +63,8 @@ int main() {
             auto oldDim = space.getDimension(j);
             double oldStep = oldDim.step;
             double newStep = 2 * oldStep / ceil((oldDim.max - oldDim.min) / oldStep);
-            double newMin = fmax(epochMin[j] - oldStep * 1.5, minBoundary[j]);
-            double newMax = fmin(epochMin[j] + oldStep * 1.5, maxBoundary[j]);
+            double newMin = fmax(epochMin[j] - oldStep, minBoundary[j]);
+            double newMax = fmin(epochMin[j] + oldStep, maxBoundary[j]);
             newSpace.addBoundary({newMin, newMax, newStep});
         }
         space = newSpace;

@@ -45,5 +45,5 @@ public:
     /**
      * @return dot product of the vectors
      * */
-    double dot(const Vector &other);
+    double dot(const Vector &other) const;
 };

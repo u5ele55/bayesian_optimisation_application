@@ -60,7 +60,7 @@ Vector::operator bool() const {
     return n;
 }
 
-double Vector::dot(const Vector &other) {
+double Vector::dot(const Vector &other) const {
     return (this->transpose() * other).at(0, 0);
 }
 

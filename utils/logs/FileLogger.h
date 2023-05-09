@@ -1,13 +1,15 @@
-#pragma once 
+#pragma once
 
-#include "ILogger.h"
+#include "AbstractLogger.h"
 #include <fstream>
 
-class FileLogger : public ILogger {
+class FileLogger : public AbstractLogger {
 public:
-    FileLogger(const std::string &filename);
-    std::ostream& stream();
-    ~FileLogger();
+    explicit FileLogger(const std::string &filename);
+
+    std::ostream &stream() override;
+
+    ~FileLogger() override;
 
 private:
     std::ofstream file;

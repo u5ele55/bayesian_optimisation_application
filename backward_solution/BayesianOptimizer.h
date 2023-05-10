@@ -22,7 +22,7 @@ private:
     /**
      * Sample of acquisition function
      * */
-    Vector acquisitionUCB(const Vector &mean, Vector stddev, double devCoef = 1);
+    Vector acquisitionUCB(const Vector &mean, const Vector &stddev, double devCoef = 1);
 
     Vector findRandomUncheckedPoint(LinearSpace &space);
 

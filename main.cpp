@@ -12,7 +12,7 @@
 const int EPOCH_QUANTITY = 3;
 
 int main() {
-    System initial{0.54321, 0.777, M_PI_4, 0.56789};
+    System initial{M_SQRT2, 0.777, M_PI_2, M_SQRT1_2};
     double stddev = 0.03;
     RK4SolverWithNoise solver(initial, stddev);
 

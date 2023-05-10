@@ -14,7 +14,7 @@ BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
           fMin(1e300) {
 }
 
-Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, double devCoef) {
+Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, const Vector &stddev, double devCoef) {
     auto space = gp.getSpace();
     double minValue = mean[0] - stddev[0] * devCoef;
     space.clear();

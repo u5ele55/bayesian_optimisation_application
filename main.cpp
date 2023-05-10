@@ -46,7 +46,7 @@ int main() {
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = mse(priorX[i]);
     }
-    auto *kernel = new SquaredExponentialKernel(stddev, 0.5);
+    auto *kernel = new SquaredExponentialKernel(1, 0.5);
 
     GaussianProcesses gp(priorX, priorY, space, kernel, stddev);
     auto *bo = new BayesianOptimizer(mse, gp);

@@ -24,8 +24,6 @@ private:
      * */
     Vector acquisitionUCB(const Vector &mean, Vector stddev, double devCoef = 1);
 
-    Vector findRandomUncheckedPoint(LinearSpace &space);
-
     bool vectorChecked(const Vector &vec) const;
 
 private:

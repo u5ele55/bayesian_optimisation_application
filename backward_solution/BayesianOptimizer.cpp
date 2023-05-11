@@ -10,50 +10,15 @@
 BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
         : f(f),
           gp(gp),
-          argmin(gp.getSpace().dimensions()),
+          argmin(4), // TODO!!!!
           fMin(1e300) {
 }
 
 Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, Vector stddev, double devCoef) {
-    auto space = gp.getSpace();
-    double minValue = mean[0] - stddev[0] * devCoef;
-    space.clear();
-    Vector thisValue = space.next();
-    Vector minPoint(thisValue);
-    for (int i = 0; i < space.size(); i++) {
-        auto value = mean[i] - stddev[i] * devCoef;
-        if (value <= minValue) {
-            minPoint = thisValue;
-            minValue = value;
-        }
-        thisValue = space.next();
-    }
-
-    if (vectorChecked(minPoint)) {
-        std::cout << "Aha! it was checked: " << minPoint << '\n';
-        minPoint = findRandomUncheckedPoint(space);
-        std::cout << "Instead, exploring at " << minPoint << '\n';
-    }
-
-    checkedDots.push_back(minPoint);
-    return minPoint;
+    
+    // mda
 }
 
-Vector BayesianOptimizer::findRandomUncheckedPoint(LinearSpace &space)
-{
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> uniformDistr(0, space.size() - 1);
-
-    size_t randomIndex = uniformDistr(rng);
-    Vector randomUnchecked = space.at(randomIndex);
-
-    while (vectorChecked(randomUnchecked)) {
-        randomIndex = uniformDistr(rng);
-        randomUnchecked = space.at(randomIndex);
-    }
-    return randomUnchecked;
-}
 
 bool BayesianOptimizer::vectorChecked(const Vector &vec) const
 {
@@ -66,7 +31,7 @@ bool BayesianOptimizer::vectorChecked(const Vector &vec) const
 }
 
 Vector BayesianOptimizer::step() {
-    auto prediction = gp.predict();
+    auto prediction = gp.predict({});
     auto mean = prediction.first;
     Vector stddev = Vector(mean.getShape().first);
 
@@ -76,7 +41,7 @@ Vector BayesianOptimizer::step() {
     auto x = acquisitionUCB(mean, stddev, 2);
     double y = f(x);
     std::cout << "Fitting new data with function value " << y << "\n";
-    gp.fit(x, y);
+    //gp.fit(x, y);
     if (y < fMin) {
         argmin = x;
         fMin = y;

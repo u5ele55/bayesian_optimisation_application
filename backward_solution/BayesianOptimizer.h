@@ -6,6 +6,7 @@
 
 #include "GaussianProcesses.h"
 #include "PendulumMSE.h"
+#include "acquisition/IAcquisition.h"
 #include <functional>
 
 class BayesianOptimizer {

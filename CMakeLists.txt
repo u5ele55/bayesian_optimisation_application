@@ -39,5 +39,5 @@ add_executable(bayesian_optimisation_application
 
 target_include_directories(bayesian_optimisation_application
         PRIVATE
-        D:/Programming/packages/cpp/eigen-3.4.0
-        D:/Programming/packages/cpp/LBFGSpp/include)
+        ${CMAKE_SOURCE_DIR}/libs/Eigen
+        ${CMAKE_SOURCE_DIR}/libs/LBFGS)

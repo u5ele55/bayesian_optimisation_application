@@ -10,26 +10,12 @@
 
 class BayesianOptimizer {
 public:
-    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp);
-
+    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, int startGeneration = 10);
     Vector step();
-
-    Vector getArgmin();
-
-    std::vector<Vector> getChecked() const;
-
-private:
-    /**
-     * Sample of acquisition function
-     * */
-    Vector acquisitionUCB(const Vector &mean, Vector stddev, double devCoef = 1);
-
-    bool vectorChecked(const Vector &vec) const;
-
+    
 private:
     PendulumMSE &f;
     GaussianProcesses &gp;
-    Vector argmin;
-    std::vector<Vector> checkedDots;
-    double fMin;
+    std::vector<Boundary> bounds;
+    int startGeneration;
 };

@@ -11,6 +11,9 @@ add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
         backward_solution/kernel/IKernel.h
+        backward_solution/acquisition/IAcquisition.h
+        backward_solution/acquisition/AcquisitionUCB.h
+        backward_solution/acquisition/AcquisitionUCB.cpp
         utils/Boundaries.h
         backward_solution/kernel/SquaredExponentialKernel.cpp
         backward_solution/kernel/SquaredExponentialKernel.h
@@ -33,3 +36,8 @@ add_executable(bayesian_optimisation_application
         utils/logs/FileLogger.h
         utils/logs/FileLogger.cpp
         main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/PendulumMSE.cpp backward_solution/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h)
+
+target_include_directories(bayesian_optimisation_application
+        PRIVATE
+        D:/Programming/packages/cpp/eigen-3.4.0
+        D:/Programming/packages/cpp/LBFGSpp/include)

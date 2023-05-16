@@ -9,5 +9,5 @@ using Eigen::VectorXd;
 
 class IAcquisition {
 public:
-    virtual double operator()(const VectorXd& x, VectorXd& grad) = 0; 
+    virtual double operator()(double yBest, const Vector &mean, const Vector &std) = 0; 
 };

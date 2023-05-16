@@ -5,7 +5,7 @@ AcquisitionUCB::AcquisitionUCB(double deviationCoef)
 {
 }
 
-double AcquisitionUCB::operator()(const VectorXd &x, VectorXd &grad)
+double AcquisitionUCB::operator()(double yBest, const Vector &mean, const Vector &std)
 {
-    // ? 
+    
 }

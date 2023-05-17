@@ -6,32 +6,25 @@
 
 #include "GaussianProcesses.h"
 #include "PendulumMSE.h"
-#include <functional>
+#include "acquisition/IAcquisition.h"
+#include <random>
+
+#define GRADIENT_STEP 1e-6
 
 class BayesianOptimizer {
 public:
-    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp);
-
-    Vector step();
-
-    Vector getArgmin();
-
-    std::vector<Vector> getChecked() const;
-
+    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration = 20);
+    std::pair<Vector, double> step();
+    Vector getArgmin() const;
 private:
-    /**
-     * Sample of acquisition function
-     * */
-    Vector acquisitionUCB(const Vector &mean, const Vector &stddev, double devCoef = 1);
-
-    Vector findRandomUncheckedPoint(LinearSpace &space);
-
-    bool vectorChecked(const Vector &vec) const;
-
+    double acquisitionCall(const VectorXd& x, VectorXd& grad);
+    VectorXd generateRandom();
 private:
     PendulumMSE &f;
     GaussianProcesses &gp;
-    Vector argmin;
-    std::vector<Vector> checkedDots;
-    double fMin;
+    std::vector<Boundary> bounds;
+    IAcquisition *acq;
+    int startGeneration;
+
+    std::vector<std::uniform_real_distribution<>> distrs;
 };

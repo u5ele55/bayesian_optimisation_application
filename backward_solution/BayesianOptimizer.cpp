@@ -4,91 +4,113 @@
 
 #include "BayesianOptimizer.h"
 #include <cmath>
+#include <Eigen/Core>
 #include <iostream>
+#include <functional>
 #include <random>
+#include <LBFGSB.h> 
 
-BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp)
+BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration)
         : f(f),
           gp(gp),
-          argmin(gp.getSpace().dimensions()),
-          fMin(1e300) {
+          bounds(bounds),
+          startGeneration(startGeneration),
+          acq(acq) {
+    
+    for (const auto &b : bounds) {
+        distrs.push_back(std::uniform_real_distribution<>{b.min, b.max+3e-7});
+    }
 }
 
-Vector BayesianOptimizer::acquisitionUCB(const Vector &mean, const Vector &stddev, double devCoef) {
-    auto space = gp.getSpace();
-    double minValue = mean[0] - stddev[0] * devCoef;
-    space.clear();
-    Vector thisValue = space.next();
-    Vector minPoint(thisValue);
-    for (int i = 0; i < space.size(); i++) {
-        auto value = mean[i] - stddev[i] * devCoef;
-        if (value <= minValue) {
-            minPoint = thisValue;
-            minValue = value;
+
+std::pair<Vector, double> BayesianOptimizer::step() {
+    // :::::::Optimize acq:::::::
+    // `startGeneration` random points : 
+    // iterate through them
+
+    Vector xBest(bounds.size());
+    double acqBest = 1e300;
+    
+    // bounds
+    VectorXd lb = VectorXd::Constant(bounds.size(), 0);
+    VectorXd ub = VectorXd::Constant(bounds.size(), 0);
+    for (int j = 0; j < bounds.size(); j ++) {
+        lb[j] = bounds[j].min;
+        ub[j] = bounds[j].max;
+    }
+ 
+    for (int i = 0; i < startGeneration; i ++) {
+        LBFGSpp::LBFGSBParam<double> param;
+        param.epsilon = 3e-7;
+        param.max_iterations = 0;
+        param.max_linesearch = 20;
+        LBFGSpp::LBFGSBSolver<double> solver(param); 
+        double localAcqBest;
+        auto initialGuess = generateRandom();
+
+        // minimize for every point
+        auto acqCall = [this](const VectorXd &x, VectorXd &grad) -> double {
+            return this->acquisitionCall(x, grad);
+        };
+        
+        try {
+            solver.minimize(acqCall, initialGuess, localAcqBest, lb, ub);
+            // store best result
+            if (localAcqBest < acqBest) {
+                acqBest = localAcqBest;
+                xBest = initialGuess;
+            }
+        } catch(...) {
+            std::cerr << "Generation " << i << " has not done\n";
         }
-        thisValue = space.next();
     }
 
-    if (vectorChecked(minPoint)) {
-        std::cout << "Aha! it was checked: " << minPoint << '\n';
-        minPoint = findRandomUncheckedPoint(space);
-        std::cout << "Instead, exploring at " << minPoint << '\n';
-    }
-
-    checkedDots.push_back(minPoint);
-    return minPoint;
+    // fit it into gp
+    auto fCall = f(xBest);
+    gp.fit({xBest}, {fCall});
+    
+    return {xBest, fCall};
 }
 
-Vector BayesianOptimizer::findRandomUncheckedPoint(LinearSpace &space)
+Vector BayesianOptimizer::getArgmin() const
 {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> uniformDistr(0, space.size() - 1);
-
-    size_t randomIndex = uniformDistr(rng);
-    Vector randomUnchecked = space.at(randomIndex);
-
-    while (vectorChecked(randomUnchecked)) {
-        randomIndex = uniformDistr(rng);
-        randomUnchecked = space.at(randomIndex);
-    }
-    return randomUnchecked;
+    return gp.getArgmin();
 }
 
-bool BayesianOptimizer::vectorChecked(const Vector &vec) const
+double BayesianOptimizer::acquisitionCall(const VectorXd &x, VectorXd &grad)
 {
-    for (const auto &v : checkedDots) {
-        if (v == vec) {
-            return true;
-        }
+    Vector xV(0);
+    xV = x;
+
+    auto predict = gp.predict({xV});
+
+    double mean = predict.first[0]; // 1d vector
+    double std = predict.second[0];
+    double value = (*acq)(gp.getMinY(), mean, std);
+
+    for(int i = 0; i < bounds.size(); i ++) {
+        Vector shiftedX = xV;
+        shiftedX[i] += GRADIENT_STEP;
+
+        predict = gp.predict({xV});
+        mean = predict.first[0];
+        std = predict.second[0];
+
+        grad[i] = ((*acq)(gp.getMinY(), mean, std) - value) / GRADIENT_STEP;
     }
-    return false;
+
+    return value;
 }
 
-Vector BayesianOptimizer::step() {
-    auto prediction = gp.predict();
-    auto mean = prediction.first;
-    Vector stddev = Vector(mean.getShape().first);
-
-    for (int i = 0; i < stddev.getShape().first; i++) {
-        stddev[i] = sqrt(prediction.second.at(i, i));
-    }
-    auto x = acquisitionUCB(mean, stddev, 2);
-    double y = f(x);
-    std::cout << "Fitting new data with function value " << y << "\n";
-    gp.fit(x, y);
-    if (y < fMin) {
-        argmin = x;
-        fMin = y;
-    }
-    return x;
-}
-
-Vector BayesianOptimizer::getArgmin() {
-    return argmin;
-}
-
-std::vector<Vector> BayesianOptimizer::getChecked() const
+VectorXd BayesianOptimizer::generateRandom() 
 {
-    return checkedDots;
+    static std::default_random_engine e;
+    
+    VectorXd r = VectorXd::Constant(bounds.size(), 0);
+
+    for(int i = 0; i < bounds.size(); i ++) {
+        r[i] = distrs[i](e);
+    }
+
+    return r;
 }

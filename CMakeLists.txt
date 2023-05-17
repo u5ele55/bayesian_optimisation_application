@@ -10,11 +10,13 @@ include_directories(utils)
 add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
-        backward_solution/OptimizerEpoch.cpp
-        backward_solution/OptimizerEpoch.h
         backward_solution/kernel/IKernel.h
-        utils/LinearSpace.cpp
-        utils/LinearSpace.h
+        backward_solution/acquisition/IAcquisition.h
+        backward_solution/acquisition/AcquisitionUCB.h
+        backward_solution/acquisition/AcquisitionUCB.cpp
+        backward_solution/acquisition/AcquisitionEI.h
+        backward_solution/acquisition/AcquisitionEI.cpp
+        utils/Boundaries.h
         backward_solution/kernel/SquaredExponentialKernel.cpp
         backward_solution/kernel/SquaredExponentialKernel.h
         forward_problem/AbstractForwardSolver.cpp
@@ -36,3 +38,8 @@ add_executable(bayesian_optimisation_application
         utils/logs/FileLogger.h
         utils/logs/FileLogger.cpp
         main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/PendulumMSE.cpp backward_solution/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h)
+
+target_include_directories(bayesian_optimisation_application
+        PRIVATE
+        ${CMAKE_SOURCE_DIR}/libs/Eigen
+        ${CMAKE_SOURCE_DIR}/libs/LBFGS)

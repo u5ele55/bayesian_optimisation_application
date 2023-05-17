@@ -10,7 +10,7 @@
 
 class PendulumMSE {
 public:
-    PendulumMSE(AbstractForwardSolver &solver, double step = 0.1);
+    PendulumMSE(AbstractForwardSolver &solver, double stddev, double step = 0.1);
 
     double operator()(const Vector &v, bool cache = true) const;
 
@@ -19,6 +19,7 @@ public:
     double getStep() const;
 private:
     size_t pointsQuantity;
+    double stddev;
     double step;
     std::vector<double> trueValues;
 };

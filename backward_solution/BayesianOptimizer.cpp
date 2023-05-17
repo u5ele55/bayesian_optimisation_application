@@ -30,32 +30,31 @@ std::pair<Vector, double> BayesianOptimizer::step() {
 
     Vector xBest(bounds.size());
     double acqBest = 1e300;
- 
+    
+    // bounds
+    VectorXd lb = VectorXd::Constant(bounds.size(), 0);
+    VectorXd ub = VectorXd::Constant(bounds.size(), 0);
+    for (int j = 0; j < bounds.size(); j ++) {
+        lb[j] = bounds[j].min;
+        ub[j] = bounds[j].max;
+    }
  
     for (int i = 0; i < startGeneration; i ++) {
         LBFGSpp::LBFGSBParam<double> param;
-        param.epsilon = 1e-3;
-        param.max_iterations = 30;
-        param.max_linesearch = 50;
-        LBFGSpp::LBFGSBSolver<double> solver(param);  // New solver class
+        param.epsilon = 1e-5;
+        param.max_iterations = 10;
+        param.max_linesearch = 20;
+        LBFGSpp::LBFGSBSolver<double> solver(param); 
         double localAcqBest;
         auto initialGuess = generateRandom();
-        // minimize for every point
-        VectorXd lb = VectorXd::Constant(bounds.size(), 0);
-        VectorXd ub = VectorXd::Constant(bounds.size(), 0);
 
-        for (int j = 0; j < bounds.size(); j ++) {
-            lb[j] = bounds[j].min;
-            ub[j] = bounds[j].max;
-        }
-        std::function<double(const VectorXd&, VectorXd&)> acqCall = [this](const VectorXd &x, VectorXd &grad) -> double {
+        // minimize for every point
+        auto acqCall = [this](const VectorXd &x, VectorXd &grad) -> double {
             return this->acquisitionCall(x, grad);
         };
         
         try {
-            // std::cout << "generation: " << i << '\n';
-            solver.minimize<std::function<double(const VectorXd&, VectorXd&)>>(acqCall, initialGuess, localAcqBest, lb, ub);
-            // std::cout << "done : " << initialGuess << '\n';;
+            solver.minimize(acqCall, initialGuess, localAcqBest, lb, ub);
             // store best result
             if (localAcqBest < acqBest) {
                 acqBest = localAcqBest;
@@ -89,15 +88,14 @@ double BayesianOptimizer::acquisitionCall(const VectorXd &x, VectorXd &grad)
     double value = (*acq)(gp.getMinY(), mean, std);
 
     for(int i = 0; i < bounds.size(); i ++) {
-        xV[i] += GRADIENT_STEP;
+        Vector shiftedX = xV;
+        shiftedX[i] += GRADIENT_STEP;
 
         predict = gp.predict({xV});
         mean = predict.first[0];
         std = predict.second[0];
 
         grad[i] = ((*acq)(gp.getMinY(), mean, std) - value) / GRADIENT_STEP;
-
-        xV[i] -= GRADIENT_STEP;
     }
 
     return value;

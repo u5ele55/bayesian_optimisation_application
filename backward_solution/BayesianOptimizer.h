@@ -9,7 +9,7 @@
 #include "acquisition/IAcquisition.h"
 #include <random>
 
-#define GRADIENT_STEP 0.0001
+#define GRADIENT_STEP 1e-6
 
 class BayesianOptimizer {
 public:

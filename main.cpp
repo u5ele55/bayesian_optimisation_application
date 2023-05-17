@@ -11,10 +11,8 @@
 #include "utils/SolutionCache.h"
 #include "utils/logs/FileLogger.h"
 #include "backward_solution/acquisition/AcquisitionUCB.h"
+#include "backward_solution/acquisition/AcquisitionEI.h"
 
-double someF(Vector x) {
-    return x[0] * x[0] + sin(x[0]);
-}
 
 int main() {
     double initOmega, initDiss, initAngle, initSpeed;
@@ -52,12 +50,12 @@ int main() {
         priorY[i] = mse(priorX[i]);
     }
     auto *kernel = new SquaredExponentialKernel(1, 0.5);
-    auto *acq = new AcquisitionUCB(2);
+    auto *acq = new AcquisitionEI;
 
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
     auto bo = BayesianOptimizer(mse, gp, {omega, dissipationCoef, initialAngle, initialAngularSpeed}, acq);
 
-    for (int i = 0; i < 100; i ++) {
+    for (int i = 0; i < 200; i ++) {
         auto res = bo.step();
         std::cout << "At iteration " << i << " checked position with MSE " << res.second << ": " << res.first << '\n';
         output->printSystem(SolutionCache::getInstance().get(res.first));

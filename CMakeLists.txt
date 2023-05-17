@@ -14,6 +14,8 @@ add_executable(bayesian_optimisation_application
         backward_solution/acquisition/IAcquisition.h
         backward_solution/acquisition/AcquisitionUCB.h
         backward_solution/acquisition/AcquisitionUCB.cpp
+        backward_solution/acquisition/AcquisitionEI.h
+        backward_solution/acquisition/AcquisitionEI.cpp
         utils/Boundaries.h
         backward_solution/kernel/SquaredExponentialKernel.cpp
         backward_solution/kernel/SquaredExponentialKernel.h

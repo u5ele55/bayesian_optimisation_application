@@ -41,8 +41,8 @@ std::pair<Vector, double> BayesianOptimizer::step() {
  
     for (int i = 0; i < startGeneration; i ++) {
         LBFGSpp::LBFGSBParam<double> param;
-        param.epsilon = 1e-5;
-        param.max_iterations = 10;
+        param.epsilon = 1e-6;
+        param.max_iterations = 0;
         param.max_linesearch = 20;
         LBFGSpp::LBFGSBSolver<double> solver(param); 
         double localAcqBest;

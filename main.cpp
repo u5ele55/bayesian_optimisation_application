@@ -55,7 +55,11 @@ int main() {
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
     auto bo = BayesianOptimizer(mse, gp, {omega, dissipationCoef, initialAngle, initialAngularSpeed}, acq);
 
-    for (int i = 0; i < 200; i ++) {
+    int iterations;
+    std::cout << "Enter quantity of BO iterations to perform: ";
+    std::cin >> iterations;
+
+    for (int i = 0; i < iterations; i ++) {
         auto res = bo.step();
         std::cout << "At iteration " << i << " checked position with MSE " << res.second << ": " << res.first << '\n';
         output->printSystem(SolutionCache::getInstance().get(res.first));

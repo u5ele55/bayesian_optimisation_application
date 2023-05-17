@@ -68,12 +68,17 @@ std::pair<Vector, Vector> GaussianProcesses::predict(const std::vector<Vector> &
         }
     }
     
-    auto conditionalCovariance = aposteriorCovariance - influenceCovariance * covInvertedTimesInfluence;
-    
     auto variance = Vector(X.size());
 
     for (int i = 0; i < X.size(); i ++) {
-        variance[i] = sqrt(conditionalCovariance.at(i, i));
+        double prod = 0;
+        
+
+        for (int j = 0; j < X.size(); j ++) {
+            prod += influenceCovariance.at(i, j) * covInvertedTimesInfluence.at(j, i);
+        }
+
+        variance[i] = sqrt( aposteriorCovariance.at(i,i) - prod );
     }
 
     return {mean, variance};

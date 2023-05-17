@@ -10,9 +10,9 @@ All plots were made with Python using matplotlib. <br>
 Black dots here are measurements with applied normal-distributed noise. Curves with opacity are results of iterations of Bayesian Optimisation. 
 Blue and orange curves are measurements from original and optimized systems. <br>
 
-1. Parameters omega, dissipation coefficient, initial angle and angular speed are 0.9, 0.4, PI/2, 0.4 respectively.<br>
-![изображение](https://user-images.githubusercontent.com/57725831/236898389-33a93bce-390e-4137-9012-79a2d58d4ad1.png) <br>
+1. omega = 1.5, dissipation coefficient = 1, initial angle = 1.57 ~ PI/2, initial angular speed = 1.5. Number of iteratoins: 500<br>
+![Figure_1](https://github.com/u5ele55/bayesian_optimisation_application/assets/57725831/05f74e1f-e4d6-43f5-aebb-7b4437886602) <br>
 
-2. Parameters are 0.9 sqrt(2)/2, PI/2, PI/4
-![изображение](https://user-images.githubusercontent.com/57725831/236898936-a805846d-e7ac-47d9-9ccf-c692116a637d.png)
+1. omega = 1.25, dissipation coefficient = 0.75, initial angle = 1.57 ~ PI/2, initial angular speed = 0. Number of iteratoins: 500<br>
+![Figure_2](https://github.com/u5ele55/bayesian_optimisation_application/assets/57725831/dafeedca-e7df-450e-b3b4-21f940337fce)
 

@@ -88,3 +88,27 @@ void GaussianProcesses::calculateInfluence(const std::vector<Vector> &X)
         }
     }
 }
+
+double GaussianProcesses::getMinY() const
+{
+    double mY = y[0];
+    for(int i = 1; i < y.size(); i ++) {
+        if (mY > y[i]) {
+            mY = y[i];
+        }
+    }
+    return mY;
+}
+
+Vector GaussianProcesses::getArgmin() const
+{
+    double mY = y[0];
+    Vector argmin(x[0]);
+    for(int i = 1; i < y.size(); i ++) {
+        if (mY > y[i]) {
+            mY = y[i];
+            argmin = x[i];
+        }
+    }
+    return argmin;
+}

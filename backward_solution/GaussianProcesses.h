@@ -27,7 +27,9 @@ public:
 
     /// @brief recalculates influenceCovariance
     void calculateInfluence(const std::vector<Vector> &X);
-
+    
+    double getMinY() const;
+    Vector getArgmin() const;
 private:
     IKernel *kernel;
     std::vector<Vector> x;

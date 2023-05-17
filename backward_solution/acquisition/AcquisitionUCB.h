@@ -5,7 +5,7 @@
 class AcquisitionUCB : public IAcquisition {
 public:
     AcquisitionUCB( double deviationCoef );
-    double operator()(double yBest, const Vector &mean, const Vector &std);
+    double operator()(double yBest, double mean, double std);
 private:
     double deviationCoef;
 };

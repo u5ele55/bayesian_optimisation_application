@@ -5,7 +5,7 @@ AcquisitionUCB::AcquisitionUCB(double deviationCoef)
 {
 }
 
-double AcquisitionUCB::operator()(double yBest, const Vector &mean, const Vector &std)
+double AcquisitionUCB::operator()(double yBest, double mean, double std)
 {
-    
+    return mean - std * deviationCoef;
 }

@@ -9,17 +9,21 @@
 #include "acquisition/IAcquisition.h"
 #include <random>
 
+#define GRADIENT_STEP 0.0001
+
 class BayesianOptimizer {
 public:
-    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, int startGeneration = 10);
-    Vector step();
+    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration = 20);
+    std::pair<Vector, double> step();
+    Vector getArgmin() const;
 private:
     double acquisitionCall(const VectorXd& x, VectorXd& grad);
-    Vector generateRandom();
+    VectorXd generateRandom();
 private:
     PendulumMSE &f;
     GaussianProcesses &gp;
     std::vector<Boundary> bounds;
+    IAcquisition *acq;
     int startGeneration;
 
     std::vector<std::uniform_real_distribution<>> distrs;

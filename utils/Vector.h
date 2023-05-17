@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Eigen/Core>
+
 #include "Matrix.h"
 
 class Vector : public Matrix {
@@ -32,6 +34,8 @@ public:
     Vector &operator+=(const Vector &other);
 
     Vector &operator=(const Vector &other);
+
+    Vector &operator=(const Eigen::VectorXd &other);
 
     Vector &operator=(Vector &&other);
 

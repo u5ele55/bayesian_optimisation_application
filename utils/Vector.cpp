@@ -127,6 +127,15 @@ Vector &Vector::operator=(const Vector &other) {
     return *this;
 }
 
+Vector &Vector::operator=(const Eigen::VectorXd &other)
+{
+    resize(other.size(), 1);
+    for (int i = 0; i < n; i++) {
+        at(i, 0) = other[i];
+    }
+    return *this;
+}
+
 Vector &Vector::operator=(Vector &&other)
 {
     resize(other.n, other.m);

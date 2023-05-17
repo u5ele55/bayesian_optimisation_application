@@ -72,7 +72,6 @@ std::pair<Vector, Vector> GaussianProcesses::predict(const std::vector<Vector> &
 
     for (int i = 0; i < X.size(); i ++) {
         double prod = 0;
-        
 
         for (int j = 0; j < X.size(); j ++) {
             prod += influenceCovariance.at(i, j) * covInvertedTimesInfluence.at(j, i);

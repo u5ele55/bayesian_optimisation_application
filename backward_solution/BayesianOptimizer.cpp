@@ -41,7 +41,7 @@ std::pair<Vector, double> BayesianOptimizer::step() {
  
     for (int i = 0; i < startGeneration; i ++) {
         LBFGSpp::LBFGSBParam<double> param;
-        param.epsilon = 1e-6;
+        param.epsilon = 3e-7;
         param.max_iterations = 0;
         param.max_linesearch = 20;
         LBFGSpp::LBFGSBSolver<double> solver(param); 
@@ -68,6 +68,7 @@ std::pair<Vector, double> BayesianOptimizer::step() {
     // fit it into gp
     auto fCall = f(xBest);
     gp.fit({xBest}, {fCall});
+    
     return {xBest, fCall};
 }
 

@@ -10,24 +10,28 @@
 
 #define MAX_POINT_QUANTITY 1000
 #define MIN_POINT_QUANTITY 10
-#define EPS 0.03
+#define POINT_WINDOW 20
 
-PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double step)
+PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double stddev, double step)
         : step(step),
-          pointsQuantity(0) {
-    
+          pointsQuantity(0),
+          stddev(stddev) {
+    int smallValueCounter = 0;
     for (int i = 0; i < MAX_POINT_QUANTITY; i++) {
         double value = solver.getState(step * i)[0];
-        if (i > MIN_POINT_QUANTITY && fabs(value) < EPS) {
-            double derivative = (value - trueValues[pointsQuantity-1]) / step;
-            if (fabs(derivative) < EPS) {
-                std::cout << "Reached " << i * step << " time, breaking here \n";
+        if (i > MIN_POINT_QUANTITY) {
+            if (fabs(value) < stddev * 3) {
+                smallValueCounter ++;
+            } else {
+                smallValueCounter = 0;
+            }
+            if (smallValueCounter > POINT_WINDOW) {
                 break;
             }
         }
-        pointsQuantity ++;
         trueValues.push_back(value);
     }
+    pointsQuantity = trueValues.size() - POINT_WINDOW;
     std::cout << "Result pointQuantity in MSE: " << pointsQuantity << '\n';
 }
 

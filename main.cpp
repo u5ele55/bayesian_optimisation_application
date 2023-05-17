@@ -27,11 +27,14 @@ int main() {
     Boundary omega = {0.5, 1.5},
         dissipationCoef = {0.1, 1},
         initialAngle = {-M_PI_2, M_PI_2},
-        initialAngularSpeed = {0, 1.5};
+        initialAngularSpeed = {-1.5, 1.5};
     
-    PendulumMSE mse(solver);
+    PendulumMSE mse(solver, stddev);
     AbstractLogger *output = new FileLogger("../test.txt");
-
+// 0.85 0.6234 0.9813 0.674
+// 0.85 0.2234 0.9813 1.474
+//  1.25 0.1234 0.9813 1.474 
+// 1 0.9
     double mseStep = mse.getStep();
     output->stream() << mseStep << "\n";
     output->printSystem(mse.getTrueValues()); // print data with noise
@@ -49,7 +52,8 @@ int main() {
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = mse(priorX[i]);
     }
-    auto *kernel = new SquaredExponentialKernel(1, 0.5);
+    
+    auto *kernel = new SquaredExponentialKernel(1, 0.9);
     auto *acq = new AcquisitionEI;
 
     GaussianProcesses gp(priorX, priorY, kernel, stddev);

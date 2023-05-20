@@ -10,7 +10,7 @@
 #include <random>
 #include <LBFGSB.h> 
 
-BayesianOptimizer::BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration)
+BayesianOptimizer::BayesianOptimizer(IFunction &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration)
         : f(f),
           gp(gp),
           bounds(bounds),

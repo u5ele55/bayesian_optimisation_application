@@ -5,6 +5,8 @@
 #include <LBFGS.h>
 
 #include "backward_solution/BayesianOptimizer.h"
+#include "backward_solution/PendulumMSE.h"
+#include "backward_solution/SimpleFunction.h"
 #include "backward_solution/kernel/SquaredExponentialKernel.h"
 #include "backward_solution/kernel/Matern52Kernel.h"
 #include "forward_problem/RK4SolverWithNoise.h"
@@ -13,8 +15,7 @@
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
 
-
-int main() {
+int mains() {
     double initOmega, initDiss, initAngle, initSpeed;
     std::cout << "Enter initial parameters (omega, dissipation, angle, angular speed): ";
     std::cin >> initOmega >> initDiss >> initAngle >> initSpeed;
@@ -84,4 +85,44 @@ int main() {
     delete output;
     
     return 0;
+}
+
+int test1d() {
+    Boundary region = {0, 1};
+    SimpleFunction f;
+    std::vector<Vector> priorX = {
+            {0.1}
+    };
+    auto priorY = std::vector<double>(priorX.size());
+    for (int i = 0; i < priorY.size(); i++) {
+        priorY[i] = f(priorX[i]);
+    }
+    
+    auto *kernel = new SquaredExponentialKernel(1, 0.1);
+    int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
+    IAcquisition *acq;
+    if (acqChoice) {
+        acq = new AcquisitionEI;
+    } else {
+        acq = new AcquisitionUCB(2);
+    }
+
+    GaussianProcesses gp(priorX, priorY, kernel, 0);
+    auto bo = BayesianOptimizer(f, gp, {region}, acq, 5);
+
+    for (;;) {
+        int c; std::cout << "Enter non-zero to make step: "; std::cin >> c;
+        if (c) {
+            auto res = bo.step();
+            std::cout << "Checked position with value " << res.second << ": " << res.first << '\n';
+        } else {
+            break;
+        }
+    }
+
+    auto argmin = bo.getArgmin();
+    std::cout << "AAAND our winner is.. " << f(argmin) << " - " << argmin << " !!!! \n";
+
+    delete kernel;
+    delete acq;
 }

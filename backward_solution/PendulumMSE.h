@@ -5,10 +5,10 @@
 #pragma once
 
 #include "../forward_problem/AbstractForwardSolver.h"
-
+#include "IFunction.h"
 #include <vector>
 
-class PendulumMSE {
+class PendulumMSE : public IFunction {
 public:
     PendulumMSE(AbstractForwardSolver &solver, double stddev, double step = 0.1);
 

@@ -10,6 +10,9 @@ include_directories(utils)
 add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
+        backward_solution/IFunction.h
+        backward_solution/SimpleFunction.h
+        backward_solution/SimpleFunction.cpp
         backward_solution/kernel/IKernel.h
         backward_solution/acquisition/IAcquisition.h
         backward_solution/acquisition/AcquisitionUCB.h

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "GaussianProcesses.h"
-#include "PendulumMSE.h"
+#include "IFunction.h"
 #include "acquisition/IAcquisition.h"
 #include <random>
 
@@ -13,14 +13,14 @@
 
 class BayesianOptimizer {
 public:
-    BayesianOptimizer(PendulumMSE &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration = 20);
+    BayesianOptimizer(IFunction &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration = 20);
     std::pair<Vector, double> step();
     Vector getArgmin() const;
 private:
     double acquisitionCall(const VectorXd& x, VectorXd& grad);
     VectorXd generateRandom();
 private:
-    PendulumMSE &f;
+    IFunction &f;
     GaussianProcesses &gp;
     std::vector<Boundary> bounds;
     IAcquisition *acq;

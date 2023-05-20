@@ -53,9 +53,7 @@ double PendulumMSE::operator()(const Vector &v, bool cache) const {
         }
         res += (trueValues[i] - compareValues[i]) * (trueValues[i] - compareValues[i]);
     }
-    res /= static_cast<double>(pointsQuantity);
-    res = sqrt(res);
-
+    
     if (cache) {
         SolutionCache::getInstance().add(v, compareValues);
     }

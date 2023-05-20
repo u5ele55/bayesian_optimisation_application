@@ -54,7 +54,13 @@ int main() {
     }
     
     auto *kernel = new SquaredExponentialKernel(1, 0.9);
-    auto *acq = new AcquisitionEI;
+    int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
+    IAcquisition *acq;
+    if (acqChoice) {
+        acq = new AcquisitionEI;
+    } else {
+        acq = new AcquisitionUCB(2);
+    }
 
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
     auto bo = BayesianOptimizer(mse, gp, {omega, dissipationCoef, initialAngle, initialAngularSpeed}, acq);

@@ -15,7 +15,7 @@
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
 
-int mains() {
+int main() {
     double initOmega, initDiss, initAngle, initSpeed;
     std::cout << "Enter initial parameters (omega, dissipation, angle, angular speed): ";
     std::cin >> initOmega >> initDiss >> initAngle >> initSpeed;
@@ -64,7 +64,7 @@ int mains() {
     }
 
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
-    auto bo = BayesianOptimizer(mse, gp, {omega, dissipationCoef, initialAngle, initialAngularSpeed}, acq);
+    auto bo = BayesianOptimizer(mse, gp, {omega, dissipationCoef, initialAngle, initialAngularSpeed}, acq, 50);
 
     int iterations;
     std::cout << "Enter quantity of BO iterations to perform: ";

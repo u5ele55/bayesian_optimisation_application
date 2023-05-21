@@ -22,11 +22,11 @@ int main() {
 
     System initial{initOmega, initDiss, initAngle, initSpeed};
     
-    double stddev = 0.03;
-    RK4SolverWithNoise solver(initial, stddev);
+    double stddev = 0.01;
+    RK4ForwardSolver solver(initial);
 
     Boundary omega = {0.5, 1.5},
-        dissipationCoef = {0.1, 1},
+        dissipationCoef = {0, 1},
         initialAngle = {-M_PI_2, M_PI_2},
         initialAngularSpeed = {-1.5, 1.5};
     
@@ -43,18 +43,22 @@ int main() {
     auto initialValues = SolutionCache::getInstance().get(initial.getInitializer());
     output->printSystem(initialValues); // print data without noise
 
+    auto bndWCoef = [](Boundary b, double coef) -> double {
+        return coef*b.min + (1-coef)*b.max;
+    };
+
     std::vector<Vector> priorX = {
-            {omega.min, dissipationCoef.min, initialAngle.min, initialAngularSpeed.max},
-            {omega.min, dissipationCoef.min, initialAngle.max, initialAngularSpeed.min},
-            {omega.min, dissipationCoef.max, initialAngle.min, initialAngularSpeed.min},
-            {omega.max, dissipationCoef.min, initialAngle.min, initialAngularSpeed.min},
+            {bndWCoef(omega, 0.5), bndWCoef(dissipationCoef, 0.5), bndWCoef(initialAngle, 0.5), bndWCoef(initialAngularSpeed, 0.5)},
+            {bndWCoef(omega, 0.25), bndWCoef(dissipationCoef, 0.35), bndWCoef(initialAngle, 0.25), bndWCoef(initialAngularSpeed, 0.75)},
+            {bndWCoef(omega, 0.1), bndWCoef(dissipationCoef, 0.4), bndWCoef(initialAngle, 0.25), bndWCoef(initialAngularSpeed, 0.55)},
+            {bndWCoef(omega, 0.6), bndWCoef(dissipationCoef, 0.2), bndWCoef(initialAngle, 0.8), bndWCoef(initialAngularSpeed, 0.4)},
     };
     auto priorY = std::vector<double>(priorX.size());
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = mse(priorX[i]);
     }
     
-    auto *kernel = new SquaredExponentialKernel(1, 0.9);
+    auto *kernel = new SquaredExponentialKernel(1, 0.05);
     int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
     IAcquisition *acq;
     if (acqChoice) {

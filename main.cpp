@@ -25,8 +25,8 @@ int main() {
 
     System initial{initOmega, initDiss, initAngle, initSpeed};
     
-    double stddev = 0.01;
-    RK4ForwardSolver solver(initial);
+    double stddev = 0.03;
+    RK4SolverWithNoise solver(initial, stddev);
 
     Boundary omega = {0.5, 1.5},
         dissipationCoef = {0, 1},

@@ -5,11 +5,11 @@
 #pragma once
 
 #include "GaussianProcesses.h"
-#include "IFunction.h"
+#include "functions/IFunction.h"
 #include "acquisition/IAcquisition.h"
 #include <random>
 
-#define GRADIENT_STEP 1e-8
+#define GRADIENT_STEP 1e-7
 
 class BayesianOptimizer {
 public:

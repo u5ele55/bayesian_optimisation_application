@@ -36,7 +36,7 @@ plot_system(X[1], Y[1], label="original")
 plot_system(X[-1], Y[-1], alpha=0.6, label="returned by BO", color="#FF0000")
 
 for i in range(2, len(X) - 1):
-    plot_system(X[i], Y[i], alpha=0.05)
+    plot_system(X[i], Y[i], alpha=0.025)
 
 plt.legend()
 plt.show()

@@ -5,9 +5,9 @@
 #include <LBFGS.h>
 
 #include "backward_solution/BayesianOptimizer.h"
-#include "backward_solution/PendulumMSE.h"
-#include "backward_solution/SimpleFunction.h"
-#include "backward_solution/Simple2DFunction.h"
+#include "functions/PendulumMSE.h"
+#include "functions/SimpleFunction.h"
+#include "functions/Simple2DFunction.h"
 #include "backward_solution/kernel/SquaredExponentialKernel.h"
 #include "backward_solution/kernel/Matern52Kernel.h"
 #include "forward_problem/RK4SolverWithNoise.h"
@@ -50,18 +50,27 @@ int main() {
         return coef*b.min + (1-coef)*b.max;
     };
 
-    std::vector<Vector> priorX = {
-            {bndWCoef(omega, 0.5), bndWCoef(dissipationCoef, 0.5), bndWCoef(initialAngle, 0.5), bndWCoef(initialAngularSpeed, 0.5)},
-            {bndWCoef(omega, 0.25), bndWCoef(dissipationCoef, 0.35), bndWCoef(initialAngle, 0.25), bndWCoef(initialAngularSpeed, 0.75)},
-            {bndWCoef(omega, 0.1), bndWCoef(dissipationCoef, 0.4), bndWCoef(initialAngle, 0.25), bndWCoef(initialAngularSpeed, 0.55)},
-            {bndWCoef(omega, 0.6), bndWCoef(dissipationCoef, 0.2), bndWCoef(initialAngle, 0.8), bndWCoef(initialAngularSpeed, 0.4)},
-    };
-    auto priorY = std::vector<double>(priorX.size());
-    for (int i = 0; i < priorY.size(); i++) {
-        priorY[i] = mse(priorX[i]);
+    int priorCount = 16;
+    std::vector<Vector> priorX;
+    std::vector<double> priorY;
+    priorX.reserve(priorCount);
+    priorY.reserve(priorCount);
+    double priorRoot = pow(priorCount, 0.25);
+    for (int i = 0; i < priorCount; i++) {
+        auto params = std::vector<double>(4);
+        for (int j = 0; j < 4; j++) {
+            params[j] = 1 / (priorRoot + 1) * (((i >> j) & 1) + 1);
+        }
+        priorX.push_back({
+            bndWCoef(omega, params[0]),
+            bndWCoef(dissipationCoef, params[1]),
+            bndWCoef(initialAngle, params[2]),
+            bndWCoef(initialAngularSpeed, params[3]),
+        });
+        priorY.push_back(mse(priorX[i]));
     }
-    
-    auto *kernel = new SquaredExponentialKernel(1, 1);
+
+    auto *kernel = new SquaredExponentialKernel(1, 0.9);
     int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
     IAcquisition *acq;
     if (acqChoice) {
@@ -134,4 +143,5 @@ int test2d() {
 
     delete kernel;
     delete acq;
+    return 0;
 }

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../forward_problem/AbstractForwardSolver.h"
+#include "AbstractForwardSolver.h"
 #include "IFunction.h"
 #include <vector>
 

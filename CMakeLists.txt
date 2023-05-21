@@ -10,11 +10,11 @@ include_directories(utils)
 add_executable(bayesian_optimisation_application
         backward_solution/GaussianProcesses.cpp
         backward_solution/GaussianProcesses.h
-        backward_solution/IFunction.h
-        backward_solution/SimpleFunction.h
-        backward_solution/SimpleFunction.cpp
-        backward_solution/Simple2DFunction.h
-        backward_solution/Simple2DFunction.cpp
+        backward_solution/functions/IFunction.h
+        backward_solution/functions/SimpleFunction.h
+        backward_solution/functions/SimpleFunction.cpp
+        backward_solution/functions/Simple2DFunction.h
+        backward_solution/functions/Simple2DFunction.cpp
         backward_solution/kernel/IKernel.h
         backward_solution/acquisition/IAcquisition.h
         backward_solution/acquisition/AcquisitionUCB.h
@@ -42,7 +42,7 @@ add_executable(bayesian_optimisation_application
         utils/logs/AbstractLogger.cpp
         utils/logs/FileLogger.h
         utils/logs/FileLogger.cpp
-        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/PendulumMSE.cpp backward_solution/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h)
+        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/functions/PendulumMSE.cpp backward_solution/functions/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h)
 
 target_include_directories(bayesian_optimisation_application
         PRIVATE

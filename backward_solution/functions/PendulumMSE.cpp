@@ -3,8 +3,8 @@
 //
 
 #include "PendulumMSE.h"
-#include "../forward_problem/RK4Solver.h"
-#include "../utils/SolutionCache.h"
+#include "RK4Solver.h"
+#include "SolutionCache.h"
 #include <cmath>
 #include <iostream>
 

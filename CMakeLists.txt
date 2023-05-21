@@ -13,6 +13,8 @@ add_executable(bayesian_optimisation_application
         backward_solution/IFunction.h
         backward_solution/SimpleFunction.h
         backward_solution/SimpleFunction.cpp
+        backward_solution/Simple2DFunction.h
+        backward_solution/Simple2DFunction.cpp
         backward_solution/kernel/IKernel.h
         backward_solution/acquisition/IAcquisition.h
         backward_solution/acquisition/AcquisitionUCB.h

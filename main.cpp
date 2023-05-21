@@ -7,6 +7,7 @@
 #include "backward_solution/BayesianOptimizer.h"
 #include "backward_solution/PendulumMSE.h"
 #include "backward_solution/SimpleFunction.h"
+#include "backward_solution/Simple2DFunction.h"
 #include "backward_solution/kernel/SquaredExponentialKernel.h"
 #include "backward_solution/kernel/Matern52Kernel.h"
 #include "forward_problem/RK4SolverWithNoise.h"
@@ -14,6 +15,8 @@
 #include "utils/logs/FileLogger.h"
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
+
+int test2d();
 
 int main() {
     double initOmega, initDiss, initAngle, initSpeed;
@@ -58,7 +61,7 @@ int main() {
         priorY[i] = mse(priorX[i]);
     }
     
-    auto *kernel = new SquaredExponentialKernel(1, 0.05);
+    auto *kernel = new SquaredExponentialKernel(1, 1);
     int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
     IAcquisition *acq;
     if (acqChoice) {
@@ -91,18 +94,20 @@ int main() {
     return 0;
 }
 
-int test1d() {
-    Boundary region = {0, 1};
-    SimpleFunction f;
+
+
+int test2d() {
+    Boundary regionX = {0, 5}, regionY = {0,5};
+    Simple2DFunction f;
     std::vector<Vector> priorX = {
-            {0.1}
+            {1, 1}, {1, 0.5}, {4, 3}
     };
     auto priorY = std::vector<double>(priorX.size());
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = f(priorX[i]);
     }
     
-    auto *kernel = new SquaredExponentialKernel(1, 0.1);
+    auto *kernel = new SquaredExponentialKernel(1, 1);
     int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
     IAcquisition *acq;
     if (acqChoice) {
@@ -112,13 +117,13 @@ int test1d() {
     }
 
     GaussianProcesses gp(priorX, priorY, kernel, 0);
-    auto bo = BayesianOptimizer(f, gp, {region}, acq, 5);
+    auto bo = BayesianOptimizer(f, gp, {regionX, regionY}, acq, 10);
 
-    for (;;) {
+    for (int i = 0;; i++) {
         int c; std::cout << "Enter non-zero to make step: "; std::cin >> c;
         if (c) {
             auto res = bo.step();
-            std::cout << "Checked position with value " << res.second << ": " << res.first << '\n';
+            std::cout << "At iteration " << i << " checked position with value " << res.second << ": " << res.first << '\n';
         } else {
             break;
         }

@@ -16,7 +16,7 @@
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
 
-#define FIX_DISSIPATION false
+#define FIX_DISSIPATION true
 
 int test2d();
 

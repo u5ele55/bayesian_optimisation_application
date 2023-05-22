@@ -30,10 +30,10 @@ int main() {
     double stddev = 0.03;
     RK4SolverWithNoise solver(initial, stddev);
 
-    Boundary omega = {0.5, 2},
-        dissipationCoef = {0, 1.5},
+    Boundary omega = {0.5, 1.5},
+        dissipationCoef = {0, 1},
         initialAngle = {-M_PI_2, M_PI_2},
-        initialAngularSpeed = {-2, 2};
+        initialAngularSpeed = {-1.5, 1.5};
 
     if (FIX_DISSIPATION) {
         dissipationCoef.min = initDiss - 1e-4;
@@ -42,10 +42,6 @@ int main() {
 
     PendulumMSE mse(solver, stddev);
     AbstractLogger *output = new FileLogger("../test.txt");
-// 0.85 0.6234 0.9813 0.674
-// 0.85 0.2234 0.9813 1.474
-//  1.25 0.1234 0.9813 1.474 
-// 1 0.9
     double mseStep = mse.getStep();
     output->stream() << mseStep << "\n";
     output->printSystem(mse.getTrueValues()); // print data with noise

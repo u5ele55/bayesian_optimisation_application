@@ -97,7 +97,6 @@ int main() {
 
     auto argmin = bo.getArgmin();
     std::cout << "AAAND our winner is.. " << mse(argmin) << " - " << argmin << " !!!! \n";
-    std::cout << argmin[0] << " " << argmin[1] << " " << argmin[2] << " " << argmin[3] << "\n";
     output->printSystem(SolutionCache::getInstance().get(argmin));
 
     delete kernel;

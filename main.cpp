@@ -16,6 +16,8 @@
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
 
+#define FIX_DISSIPATION false
+
 int test2d();
 
 int main() {
@@ -28,11 +30,16 @@ int main() {
     double stddev = 0.03;
     RK4SolverWithNoise solver(initial, stddev);
 
-    Boundary omega = {0.5, 1.5},
-        dissipationCoef = {0, 1},
+    Boundary omega = {0.5, 2},
+        dissipationCoef = {0, 1.5},
         initialAngle = {-M_PI_2, M_PI_2},
-        initialAngularSpeed = {-1.5, 1.5};
-    
+        initialAngularSpeed = {-2, 2};
+
+    if (FIX_DISSIPATION) {
+        dissipationCoef.min = initDiss - 1e-4;
+        dissipationCoef.max = initDiss + 1e-4;
+    }
+
     PendulumMSE mse(solver, stddev);
     AbstractLogger *output = new FileLogger("../test.txt");
 // 0.85 0.6234 0.9813 0.674
@@ -94,6 +101,7 @@ int main() {
 
     auto argmin = bo.getArgmin();
     std::cout << "AAAND our winner is.. " << mse(argmin) << " - " << argmin << " !!!! \n";
+    std::cout << argmin[0] << " " << argmin[1] << " " << argmin[2] << " " << argmin[3] << "\n";
     output->printSystem(SolutionCache::getInstance().get(argmin));
 
     delete kernel;

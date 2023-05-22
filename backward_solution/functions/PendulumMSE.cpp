@@ -8,7 +8,7 @@
 #include <cmath>
 #include <iostream>
 
-#define MAX_POINT_QUANTITY 1000
+#define MAX_POINT_QUANTITY 500
 #define MIN_POINT_QUANTITY 10
 #define POINT_WINDOW 20
 

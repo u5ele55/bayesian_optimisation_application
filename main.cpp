@@ -15,66 +15,63 @@
 #include "utils/logs/FileLogger.h"
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
-
-#define FIX_DISSIPATION true
+#include "SystemFixedDissipationFabric.h"
 
 int test2d();
 
 int main() {
-    double initOmega, initDiss, initAngle, initSpeed;
-    std::cout << "Enter initial parameters (omega, dissipation, angle, angular speed): ";
-    std::cin >> initOmega >> initDiss >> initAngle >> initSpeed;
+    Vector initialParams(3);
+    std::cout << "Enter initial parameters (omega, angle, angular speed): ";
+    std::cin >> initialParams[0] >> initialParams[1] >> initialParams[2];
 
-    System initial{initOmega, initDiss, initAngle, initSpeed};
-    
+    const double dissipationCoefficient = 0.9;
+
+    auto *fabric = new SystemFixedDissipationFabric(dissipationCoefficient);
+    System initial = fabric->produce(initialParams);
+
     double stddev = 0.03;
     RK4SolverWithNoise solver(initial, stddev);
 
     Boundary omega = {0.5, 1.5},
-        dissipationCoef = {0, 1},
         initialAngle = {-M_PI_2, M_PI_2},
         initialAngularSpeed = {-1.5, 1.5};
 
-    if (FIX_DISSIPATION) {
-        dissipationCoef.min = initDiss - 1e-4;
-        dissipationCoef.max = initDiss + 1e-4;
-    }
-
-    PendulumMSE mse(solver, stddev);
+    PendulumMSE mse(solver, stddev, fabric);
     AbstractLogger *output = new FileLogger("../test.txt");
     double mseStep = mse.getStep();
     output->stream() << mseStep << "\n";
     output->printSystem(mse.getTrueValues()); // print data with noise
-    mse(initial.getInitializer()); // solve system without noise
-    auto initialValues = SolutionCache::getInstance().get(initial.getInitializer());
+    mse(initialParams); // solve system without noise
+    auto initialValues = SolutionCache::getInstance().get(initialParams);
     output->printSystem(initialValues); // print data without noise
 
     auto bndWCoef = [](Boundary b, double coef) -> double {
-        return coef*b.min + (1-coef)*b.max;
+        return coef * b.min + (1 - coef) * b.max;
     };
 
-    int priorCount = 16;
+    int priorCount = 8;
     std::vector<Vector> priorX;
     std::vector<double> priorY;
     priorX.reserve(priorCount);
     priorY.reserve(priorCount);
-    double priorRoot = pow(priorCount, 0.25);
+    double priorRoot = 2;
     for (int i = 0; i < priorCount; i++) {
-        auto params = std::vector<double>(4);
-        for (int j = 0; j < 4; j++) {
+        auto params = std::vector<double>(3);
+        for (int j = 0; j < 3; j++) {
             params[j] = 1 / (priorRoot + 1) * (((i >> j) & 1) + 1);
         }
         priorX.push_back({
-            bndWCoef(omega, params[0]),
-            bndWCoef(dissipationCoef, params[1]),
-            bndWCoef(initialAngle, params[2]),
-            bndWCoef(initialAngularSpeed, params[3]),
-        });
+                                 bndWCoef(omega, params[0]),
+                                 bndWCoef(initialAngle, params[1]),
+                                 bndWCoef(initialAngularSpeed, params[2]),
+                         });
         priorY.push_back(mse(priorX[i]));
     }
 
     auto *kernel = new SquaredExponentialKernel(1, 0.9);
-    int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
+    int acqChoice;
+    std::cout << "ACQ: 0 - UCB, !0 - EI\n";
+    std::cin >> acqChoice;
     IAcquisition *acq;
     if (acqChoice) {
         acq = new AcquisitionEI;
@@ -83,13 +80,13 @@ int main() {
     }
 
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
-    auto bo = BayesianOptimizer(mse, gp, {omega, dissipationCoef, initialAngle, initialAngularSpeed}, acq, 50);
+    auto bo = BayesianOptimizer(mse, gp, {omega, initialAngle, initialAngularSpeed}, acq, 50);
 
     int iterations;
     std::cout << "Enter quantity of BO iterations to perform: ";
     std::cin >> iterations;
 
-    for (int i = 0; i < iterations; i ++) {
+    for (int i = 0; i < iterations; i++) {
         auto res = bo.step();
         std::cout << "At iteration " << i << " checked position with MSE " << res.second << ": " << res.first << '\n';
         output->printSystem(SolutionCache::getInstance().get(res.first));
@@ -102,25 +99,29 @@ int main() {
     delete kernel;
     delete acq;
     delete output;
-    
+    delete fabric;
+
     return 0;
 }
 
 
-
 int test2d() {
-    Boundary regionX = {0, 5}, regionY = {0,5};
+    Boundary regionX = {0, 5}, regionY = {0, 5};
     Simple2DFunction f;
     std::vector<Vector> priorX = {
-            {1, 1}, {1, 0.5}, {4, 3}
+            {1, 1},
+            {1, 0.5},
+            {4, 3}
     };
     auto priorY = std::vector<double>(priorX.size());
     for (int i = 0; i < priorY.size(); i++) {
         priorY[i] = f(priorX[i]);
     }
-    
+
     auto *kernel = new SquaredExponentialKernel(1, 1);
-    int acqChoice; std::cout << "ACQ: 0 - UCB, !0 - EI\n"; std::cin >> acqChoice;
+    int acqChoice;
+    std::cout << "ACQ: 0 - UCB, !0 - EI\n";
+    std::cin >> acqChoice;
     IAcquisition *acq;
     if (acqChoice) {
         acq = new AcquisitionEI;
@@ -132,10 +133,13 @@ int test2d() {
     auto bo = BayesianOptimizer(f, gp, {regionX, regionY}, acq, 10);
 
     for (int i = 0;; i++) {
-        int c; std::cout << "Enter non-zero to make step: "; std::cin >> c;
+        int c;
+        std::cout << "Enter non-zero to make step: ";
+        std::cin >> c;
         if (c) {
             auto res = bo.step();
-            std::cout << "At iteration " << i << " checked position with value " << res.second << ": " << res.first << '\n';
+            std::cout << "At iteration " << i << " checked position with value " << res.second << ": " << res.first
+                      << '\n';
         } else {
             break;
         }

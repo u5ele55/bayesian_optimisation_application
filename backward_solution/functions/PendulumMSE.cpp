@@ -12,10 +12,10 @@
 #define MIN_POINT_QUANTITY 10
 #define POINT_WINDOW 20
 
-PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double stddev, double step)
+PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double stddev, ISystemFabric *fabric, double step)
         : step(step),
           pointsQuantity(0),
-          stddev(stddev) {
+          systemFabric(fabric) {
     int smallValueCounter = 0;
     for (int i = 0; i < MAX_POINT_QUANTITY; i++) {
         double value = solver.getState(step * i)[0];
@@ -38,7 +38,7 @@ PendulumMSE::PendulumMSE(AbstractForwardSolver &solver, double stddev, double st
 double PendulumMSE::operator()(const Vector &v, bool cache) const {
     double res = 0;
 
-    auto compareSystem = System(v[0], v[1], v[2], v[3]);
+    auto compareSystem = systemFabric->produce(v);
     auto compSolver = RK4ForwardSolver(compareSystem);
 
     auto compareValues = SolutionCache::getInstance().get(v);

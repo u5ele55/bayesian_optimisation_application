@@ -42,7 +42,7 @@ add_executable(bayesian_optimisation_application
         utils/logs/AbstractLogger.cpp
         utils/logs/FileLogger.h
         utils/logs/FileLogger.cpp
-        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/functions/PendulumMSE.cpp backward_solution/functions/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h forward_problem/SystemFixedDissipationFabric.cpp forward_problem/SystemFixedDissipationFabric.h forward_problem/ISystemFabric.h)
+        main.cpp backward_solution/BayesianOptimizer.h backward_solution/BayesianOptimizer.cpp backward_solution/functions/PendulumMSE.cpp backward_solution/functions/PendulumMSE.h utils/SolutionCache.cpp utils/SolutionCache.h backward_solution/kernel/Matern52Kernel.cpp backward_solution/kernel/Matern52Kernel.h forward_problem/SystemFixedDissipationFabric.cpp forward_problem/SystemFixedDissipationFabric.h forward_problem/ISystemFabric.h forward_problem/SystemOnlyAngleFabric.cpp forward_problem/SystemOnlyAngleFabric.h forward_problem/SystemAngleAndSpeedFabric.cpp forward_problem/SystemAngleAndSpeedFabric.h)
 
 target_include_directories(bayesian_optimisation_application
         PRIVATE

@@ -16,6 +16,8 @@
 #include "backward_solution/acquisition/AcquisitionUCB.h"
 #include "backward_solution/acquisition/AcquisitionEI.h"
 #include "SystemFixedDissipationFabric.h"
+#include "SystemOnlyAngleFabric.h"
+#include "forward_problem/SystemAngleAndSpeedFabric.h"
 
 int test2d();
 
@@ -23,16 +25,27 @@ int main() {
     Vector initialParams(3);
     std::cout << "Enter initial parameters (omega, angle, angular speed): ";
     std::cin >> initialParams[0] >> initialParams[1] >> initialParams[2];
+    // Vector initialParams(1);
+    // std::cout << "Enter initial angle: ";
+    // std::cin >> initialParams[0];
+    // Vector initialParams(2);
+    // std::cout << "Enter initial angle and angular speed: ";
+    // std::cin >> initialParams[0] >> initialParams[1];
 
-    const double dissipationCoefficient = 0.9;
+    const double dissipationCoefficient = 0.9,
+        omega = 0.9,
+        angularSpeed = 0.9;
+
 
     auto *fabric = new SystemFixedDissipationFabric(dissipationCoefficient);
+    // auto *fabric = new SystemOnlyAngleFabric(dissipationCoefficient, omega, angularSpeed);
+    // auto *fabric = new SystemAngleAndSpeedFabric(dissipationCoefficient, omega);
     System initial = fabric->produce(initialParams);
 
-    double stddev = 0.03;
-    RK4SolverWithNoise solver(initial, stddev);
+    double stddev = 0.01;
+    RK4SolverWithNoise solver(initial, stddev, 42);
 
-    Boundary omega = {0.5, 1.5},
+    Boundary initialOmega = {0.5, 1.5},
         initialAngle = {-M_PI_2, M_PI_2},
         initialAngularSpeed = {-1.5, 1.5};
 
@@ -61,14 +74,15 @@ int main() {
             params[j] = 1 / (priorRoot + 1) * (((i >> j) & 1) + 1);
         }
         priorX.push_back({
-                                 bndWCoef(omega, params[0]),
+                                 bndWCoef(initialOmega, params[0]),
                                  bndWCoef(initialAngle, params[1]),
                                  bndWCoef(initialAngularSpeed, params[2]),
                          });
         priorY.push_back(mse(priorX[i]));
     }
 
-    auto *kernel = new SquaredExponentialKernel(1, 0.9);
+    // auto *kernel = new SquaredExponentialKernel(1, 0.5);
+    auto *kernel = new Matern52Kernel(2, 0.5);
     int acqChoice;
     std::cout << "ACQ: 0 - UCB, !0 - EI\n";
     std::cin >> acqChoice;
@@ -76,12 +90,17 @@ int main() {
     if (acqChoice) {
         acq = new AcquisitionEI;
     } else {
-        acq = new AcquisitionUCB(2);
+        acq = new AcquisitionUCB(4);
     }
-
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
-    auto bo = BayesianOptimizer(mse, gp, {omega, initialAngle, initialAngularSpeed}, acq, 50);
+    auto bo = BayesianOptimizer(mse, gp, {initialOmega, initialAngle, initialAngularSpeed}, acq, 42, 50);
+    // auto bo = BayesianOptimizer(mse, gp, {initialAngle}, acq, 42, 10);
+    // auto bo = BayesianOptimizer(mse, gp, {initialAngle, initialAngularSpeed}, acq, 42, 50);
+// 1.23 0.987 -1 0 200
+// 1 1.57 -1.5 0 100
+// 1 0.987 -1.3 1 300
 
+// 0.8 1.25 -1.5 0 200
     int iterations;
     std::cout << "Enter quantity of BO iterations to perform: ";
     std::cin >> iterations;
@@ -95,6 +114,11 @@ int main() {
     auto argmin = bo.getArgmin();
     std::cout << "AAAND our winner is.. " << mse(argmin) << " - " << argmin << " !!!! \n";
     output->printSystem(SolutionCache::getInstance().get(argmin));
+
+    // std::cout << gp.predict({{0.1}}).first << ' ' << gp.predict({{0.1}}).second << '\n';
+    // std::cout << gp.predict({{0.25}}).first << ' ' << gp.predict({{0.25}}).second << '\n';
+    // std::cout << gp.predict({{0.9}}).first << ' ' << gp.predict({{0.9}}).second << '\n';
+    //
 
     delete kernel;
     delete acq;

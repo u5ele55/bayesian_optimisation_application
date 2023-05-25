@@ -24,6 +24,8 @@ add_executable(bayesian_optimisation_application
         utils/Boundaries.h
         backward_solution/kernel/SquaredExponentialKernel.cpp
         backward_solution/kernel/SquaredExponentialKernel.h
+        forward_problem/FullSystemFabric.cpp
+        forward_problem/FullSystemFabric.h
         forward_problem/AbstractForwardSolver.cpp
         forward_problem/AbstractForwardSolver.h
         forward_problem/RK4Solver.cpp

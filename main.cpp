@@ -18,13 +18,14 @@
 #include "SystemFixedDissipationFabric.h"
 #include "SystemOnlyAngleFabric.h"
 #include "forward_problem/SystemAngleAndSpeedFabric.h"
+#include "forward_problem/FullSystemFabric.h"
 
 int test2d();
 
 int main() {
-    Vector initialParams(3);
-    std::cout << "Enter initial parameters (omega, angle, angular speed): ";
-    std::cin >> initialParams[0] >> initialParams[1] >> initialParams[2];
+    Vector initialParams(4);
+    std::cout << "Enter initial parameters (omega, dissipation, angle, angular speed): ";
+    std::cin >> initialParams[0] >> initialParams[1] >> initialParams[2] >> initialParams[3];
     // Vector initialParams(1);
     // std::cout << "Enter initial angle: ";
     // std::cin >> initialParams[0];
@@ -32,12 +33,13 @@ int main() {
     // std::cout << "Enter initial angle and angular speed: ";
     // std::cin >> initialParams[0] >> initialParams[1];
 
-    const double dissipationCoefficient = 0.9,
-        omega = 0.9,
-        angularSpeed = 0.9;
+    // const double dissipationCoefficient = 0.9,
+    //     omega = 0.9,
+    //     angularSpeed = 0.9;
 
 
-    auto *fabric = new SystemFixedDissipationFabric(dissipationCoefficient);
+    // auto *fabric = new SystemFixedDissipationFabric(dissipationCoefficient);
+    auto *fabric = new FullSystemFabric;
     // auto *fabric = new SystemOnlyAngleFabric(dissipationCoefficient, omega, angularSpeed);
     // auto *fabric = new SystemAngleAndSpeedFabric(dissipationCoefficient, omega);
     System initial = fabric->produce(initialParams);
@@ -46,6 +48,7 @@ int main() {
     RK4SolverWithNoise solver(initial, stddev, 42);
 
     Boundary initialOmega = {0.5, 1.5},
+        initialDissip = {0.05, 1.5},
         initialAngle = {-M_PI_2, M_PI_2},
         initialAngularSpeed = {-1.5, 1.5};
 
@@ -62,21 +65,24 @@ int main() {
         return coef * b.min + (1 - coef) * b.max;
     };
 
-    int priorCount = 8;
+    
+    // Generating prior data uniformly
+    double parts = 2;
+    int priorCount = pow(parts, initialParams.getShape().first);
     std::vector<Vector> priorX;
     std::vector<double> priorY;
     priorX.reserve(priorCount);
     priorY.reserve(priorCount);
-    double priorRoot = 2;
     for (int i = 0; i < priorCount; i++) {
-        auto params = std::vector<double>(3);
-        for (int j = 0; j < 3; j++) {
-            params[j] = 1 / (priorRoot + 1) * (((i >> j) & 1) + 1);
+        auto params = std::vector<double>(initialParams.getShape().first);
+        for (int j = 0; j < initialParams.getShape().first; j++) {
+            params[j] = 1 / (parts + 1) * (((i >> j) & 1) + 1);
         }
         priorX.push_back({
                                  bndWCoef(initialOmega, params[0]),
-                                 bndWCoef(initialAngle, params[1]),
-                                 bndWCoef(initialAngularSpeed, params[2]),
+                                 bndWCoef(initialDissip, params[1]),
+                                 bndWCoef(initialAngle, params[2]),
+                                 bndWCoef(initialAngularSpeed, params[3]),
                          });
         priorY.push_back(mse(priorX[i]));
     }
@@ -93,7 +99,7 @@ int main() {
         acq = new AcquisitionUCB(4);
     }
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
-    auto bo = BayesianOptimizer(mse, gp, {initialOmega, initialAngle, initialAngularSpeed}, acq, 42, 50);
+    auto bo = BayesianOptimizer(mse, gp, {initialOmega, initialDissip, initialAngle, initialAngularSpeed}, acq, 42, 50);
     // auto bo = BayesianOptimizer(mse, gp, {initialAngle}, acq, 42, 10);
     // auto bo = BayesianOptimizer(mse, gp, {initialAngle, initialAngularSpeed}, acq, 42, 50);
 // 1.23 0.987 -1 0 200

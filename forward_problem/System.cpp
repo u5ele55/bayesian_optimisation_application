@@ -22,6 +22,3 @@ System::System(const Vector& vector)
           dissipationCoefficient(vector[1]),
           initialState({vector[2], vector[3]}) {}
 
-Vector System::getInitializer() const {
-    return Vector({omega, dissipationCoefficient, initialState[0], initialState[1]});
-}

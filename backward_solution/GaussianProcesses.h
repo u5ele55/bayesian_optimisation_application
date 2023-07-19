@@ -31,6 +31,7 @@ public:
     double getMinY() const;
     Vector getArgmin() const;
 private:
+    double noise;
     IKernel *kernel;
     std::vector<Vector> x;
     std::vector<double> y;

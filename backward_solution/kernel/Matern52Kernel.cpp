@@ -10,9 +10,10 @@ Matern52Kernel::Matern52Kernel(double sigma, double length)
           sigma(sigma) {}
 
 double Matern52Kernel::operator()(const Vector &a, const Vector &b) const {
-    double dot = a.dot(b);
+    double dot = (a-b).dot(a-b);
     double distance = sqrt(dot);
     double sqrt5 = sqrt(5);
+    double res = sigma * (1 + sqrt5 * distance / length + 5 * dot / (3 * length * length)) * exp(-sqrt5 * distance / length);
 
     return sigma * (1 + sqrt5 * distance / length + 5 * dot / (3 * length * length)) * exp(-sqrt5 * distance / length);
 }

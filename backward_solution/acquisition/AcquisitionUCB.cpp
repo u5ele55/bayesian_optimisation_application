@@ -1,3 +1,4 @@
+#include <iostream>
 #include "AcquisitionUCB.h"
 
 AcquisitionUCB::AcquisitionUCB(double deviationCoef)

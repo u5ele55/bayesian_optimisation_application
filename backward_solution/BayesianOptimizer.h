@@ -9,11 +9,11 @@
 #include "acquisition/IAcquisition.h"
 #include <random>
 
-#define GRADIENT_STEP 1e-7
+#define GRADIENT_STEP 1e-10
 
 class BayesianOptimizer {
 public:
-    BayesianOptimizer(IFunction &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int startGeneration = 20);
+    BayesianOptimizer(IFunction &f, GaussianProcesses &gp, const std::vector<Boundary> &bounds, IAcquisition *acq, int seed, int startGeneration = 20);
     std::pair<Vector, double> step();
     Vector getArgmin() const;
 private:
@@ -25,6 +25,6 @@ private:
     std::vector<Boundary> bounds;
     IAcquisition *acq;
     int startGeneration;
-
+    std::default_random_engine e;
     std::vector<std::uniform_real_distribution<>> distrs;
 };

@@ -2,11 +2,12 @@
 
 #include <iostream>
 
-RK4SolverWithNoise::RK4SolverWithNoise(System &system, double stddev, double step)
+RK4SolverWithNoise::RK4SolverWithNoise(System &system, double stddev, int seed, double step)
         : RK4ForwardSolver(system, step),
           stddev(stddev),
           gen(rd()),
           normalDistr(0, stddev) {
+    gen.seed(seed);
 }
 
 

@@ -11,8 +11,6 @@ public:
     void f(Vector &state) const;
 
     Vector getInitialState() const;
-
-    Vector getInitializer() const;
 private:
     double omega;
     double dissipationCoefficient;

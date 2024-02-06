@@ -20,8 +20,6 @@
 #include "forward_problem/SystemAngleAndSpeedFabric.h"
 #include "forward_problem/FullSystemFabric.h"
 
-int test2d();
-
 int main() {
     Vector initialParams(4);
     std::cout << "Enter initial parameters (omega, dissipation, angle, angular speed): ";
@@ -98,15 +96,12 @@ int main() {
     } else {
         acq = new AcquisitionUCB(4);
     }
+    
     GaussianProcesses gp(priorX, priorY, kernel, stddev);
     auto bo = BayesianOptimizer(mse, gp, {initialOmega, initialDissip, initialAngle, initialAngularSpeed}, acq, 42, 50);
     // auto bo = BayesianOptimizer(mse, gp, {initialAngle}, acq, 42, 10);
     // auto bo = BayesianOptimizer(mse, gp, {initialAngle, initialAngularSpeed}, acq, 42, 50);
-// 1.23 0.987 -1 0 200
-// 1 1.57 -1.5 0 100
-// 1 0.987 -1.3 1 300
 
-// 0.8 1.25 -1.5 0 200
     int iterations;
     std::cout << "Enter quantity of BO iterations to perform: ";
     std::cin >> iterations;
@@ -121,64 +116,10 @@ int main() {
     std::cout << "AAAND our winner is.. " << mse(argmin) << " - " << argmin << " !!!! \n";
     output->printSystem(SolutionCache::getInstance().get(argmin));
 
-    // std::cout << gp.predict({{0.1}}).first << ' ' << gp.predict({{0.1}}).second << '\n';
-    // std::cout << gp.predict({{0.25}}).first << ' ' << gp.predict({{0.25}}).second << '\n';
-    // std::cout << gp.predict({{0.9}}).first << ' ' << gp.predict({{0.9}}).second << '\n';
-    //
-
     delete kernel;
     delete acq;
     delete output;
     delete fabric;
 
-    return 0;
-}
-
-
-int test2d() {
-    Boundary regionX = {0, 5}, regionY = {0, 5};
-    Simple2DFunction f;
-    std::vector<Vector> priorX = {
-            {1, 1},
-            {1, 0.5},
-            {4, 3}
-    };
-    auto priorY = std::vector<double>(priorX.size());
-    for (int i = 0; i < priorY.size(); i++) {
-        priorY[i] = f(priorX[i]);
-    }
-
-    auto *kernel = new SquaredExponentialKernel(1, 1);
-    int acqChoice;
-    std::cout << "ACQ: 0 - UCB, !0 - EI\n";
-    std::cin >> acqChoice;
-    IAcquisition *acq;
-    if (acqChoice) {
-        acq = new AcquisitionEI;
-    } else {
-        acq = new AcquisitionUCB(2);
-    }
-
-    GaussianProcesses gp(priorX, priorY, kernel, 0);
-    auto bo = BayesianOptimizer(f, gp, {regionX, regionY}, acq, 10);
-
-    for (int i = 0;; i++) {
-        int c;
-        std::cout << "Enter non-zero to make step: ";
-        std::cin >> c;
-        if (c) {
-            auto res = bo.step();
-            std::cout << "At iteration " << i << " checked position with value " << res.second << ": " << res.first
-                      << '\n';
-        } else {
-            break;
-        }
-    }
-
-    auto argmin = bo.getArgmin();
-    std::cout << "AAAND our winner is.. " << f(argmin) << " - " << argmin << " !!!! \n";
-
-    delete kernel;
-    delete acq;
     return 0;
 }
